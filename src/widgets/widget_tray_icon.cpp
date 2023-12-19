@@ -70,7 +70,7 @@ WidgetTrayIcon::WidgetTrayIcon(QObject* parent)
 #endif
 
     if(m_type == Qt) {
-        m_icon = new QSystemTrayIcon(this);
+        m_icon = new QSystemTrayIcon{this};
         connect(m_icon, &QSystemTrayIcon::activated, this, &WidgetTrayIcon::icon_activated);
     }
 }
@@ -94,8 +94,8 @@ WidgetTrayIcon::~WidgetTrayIcon() {
 
 void WidgetTrayIcon::retranslateUi() {
     if(m_type == Gtk || m_type == Unity)
-        for(int i = 0; i < m_gtk_action_menu_item_list.count(); i++) {
-            const EteraGtkActionMenuItem& action_menu_item = m_gtk_action_menu_item_list[i];
+        for(auto&& item: m_gtk_action_menu_item_list) {
+            const EteraGtkActionMenuItem& action_menu_item = item;
             gtk_menu_item_set_label(action_menu_item.MenuItem, action_menu_item.Action->text().toUtf8().constData());
         }
 }
@@ -122,8 +122,8 @@ void WidgetTrayIcon::setContextMenu(QMenu* menu) {
 
         if(m_gtk_menu != NULL) {
             QList<QAction*> actions = menu->actions();
-            for(int i = 0; i < actions.count(); i++) {
-                QAction* action = actions[i];
+            for(auto* action_: actions) {
+                QAction* action = action_;
 
                 GtkWidget* item;
                 if(action->isSeparator() == true)

@@ -121,8 +121,8 @@ EteraIconProvider::~EteraIconProvider() {
 QIcon EteraIconProvider::prepareIcon(const QIcon& icon, int scale, bool center, bool preview) {
     QIcon result;
 
-    for(int i = 0; i < m_icon_sizes.count(); i++) {
-        int size = m_icon_sizes[i] / scale;
+    for(const int icon_sizes: m_icon_sizes) {
+        int size = icon_sizes / scale;
 
         QPixmap pixmap = icon.pixmap(size);
         if(pixmap.width() < size) {
@@ -162,8 +162,8 @@ QIcon EteraIconProvider::prepareIcon(const QIcon& icon, int scale, bool center, 
 QIcon EteraIconProvider::addLinkIcon(const QIcon& base_icon) {
     QIcon result;
 
-    for(int i = 0; i < m_icon_sizes.count(); i++) {
-        int size = m_icon_sizes[i];
+    for(const int icon_sizes: m_icon_sizes) {
+        int size = icon_sizes;
         int link_size = size / 2;
 
         QPixmap base_pixmap = base_icon.pixmap(size);
@@ -250,8 +250,8 @@ bool EteraIconProvider::extensionIcon(QIcon& icon, const QString& ext, bool shar
     if(center == false)
         sizes << SHIL_JUMBO;
 
-    for(int i = 0; i < sizes.size(); i++) {
-        int size = sizes[i];
+    for(int size_: sizes) {
+        int size = size_;
 
         IImageList* ilist;
         if(FAILED(SHGetImageList(size, IID_IImageList, (void**)&ilist)))

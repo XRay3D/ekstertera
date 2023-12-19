@@ -33,6 +33,7 @@ private:
      * \brief Список кнопок
      */
     QList<QToolButton*> m_buttons;
+    QHBoxLayout* m_layout;
 
 public slots:
 

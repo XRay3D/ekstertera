@@ -18,7 +18,7 @@ WidgetDisk::WidgetDisk(QWidget* parent)
     m_put_activity_limit = 8 /* TODO: #3 */;
     m_get_activity_limit = 8 /* TODO: #3 */;
 
-    m_explorer = new QListWidget(this);
+    m_explorer = new QListWidget{this};
 
     m_explorer->setWrapping(true);
     m_explorer->setResizeMode(QListView::Adjust);
@@ -107,7 +107,7 @@ WidgetDisk::WidgetDisk(QWidget* parent)
     on_item_selection_changed();
 
     // таймер отложенных сигналов / задач
-    m_emit_timer = new QTimer(this);
+    m_emit_timer = new QTimer{this};
     connect(m_emit_timer, &QTimer::timeout, this, &WidgetDisk::emit_delayed_signals);
     m_emit_timer->start(10000); /* TODO: #2 */
 }
@@ -220,14 +220,14 @@ void WidgetDisk::updateBufferList(bool copy_mode) {
     else
         clipboard->setCutMode();
 
-    for(int i = 0; i < selected.count(); i++)
-        clipboard->append(*((static_cast<WidgetDiskItem*>(selected[i]))->item()));
+    for(auto&& item: selected)
+        clipboard->append(*((static_cast<WidgetDiskItem*>(item))->item()));
 }
 //----------------------------------------------------------------------------------------------
 
 WidgetDiskItem* WidgetDisk::findByPath(const QString& path) {
     // оптимизировать O(n) при необходимости
-    for(int i = 0; i < m_explorer->count(); i++) {
+    for(int i = 0; i < m_explorer->count(); ++i) {
         WidgetDiskItem* witem = static_cast<WidgetDiskItem*>(m_explorer->item(i));
         const EteraItem* eitem = witem->item();
         if(eitem->path() == path)
@@ -240,7 +240,7 @@ WidgetDiskItem* WidgetDisk::findByPath(const QString& path) {
 
 void WidgetDisk::removeByPath(const QString& path) {
     // оптимизировать O(n) при необходимости
-    for(int i = 0; i < m_explorer->count(); i++) {
+    for(int i = 0; i < m_explorer->count(); ++i) {
         WidgetDiskItem* witem = static_cast<WidgetDiskItem*>(m_explorer->item(i));
         const EteraItem* eitem = witem->item();
         if(eitem->path() == path) {
@@ -322,8 +322,8 @@ void WidgetDisk::on_item_selection_changed() {
     bool can_share = false;
     bool can_revoke = false;
 
-    for(int i = 0; i < selected.count(); i++) {
-        WidgetDiskItem* witem = static_cast<WidgetDiskItem*>(selected[i]);
+    for(auto&& item: selected) {
+        WidgetDiskItem* witem = static_cast<WidgetDiskItem*>(item);
         const EteraItem* eitem = witem->item();
 
         if(eitem->isPublic() == true)
@@ -405,7 +405,7 @@ void WidgetDisk::setPreviewMode(bool mode) {
     if(m_preview_mode == false)
         EteraIconProvider::instance()->cancelPreview();
 
-    for(int i = 0; i < m_explorer->count(); i++) {
+    for(int i = 0; i < m_explorer->count(); ++i) {
         WidgetDiskItem* item = static_cast<WidgetDiskItem*>(m_explorer->item(i));
         item->update(m_preview_mode);
     }
@@ -479,8 +479,8 @@ void WidgetDisk::task_on_ls_success(EteraAPI* api, const EteraItemList& list, qu
     }
 
     // добавление элементов
-    for(int i = 0; i < list.count(); i++)
-        new WidgetDiskItem(m_explorer, list[i], m_preview_mode);
+    for(auto&& item: list)
+        new WidgetDiskItem(m_explorer, item, m_preview_mode);
 
     // проверка необходимости остановки
     if((quint64)list.count() < limit) {
@@ -658,8 +658,7 @@ void WidgetDisk::menu_paste_triggered() {
             m_tasks->addTask(parent, ROOT_MESSAGE_MV);
     }
 
-    for(int i = 0; i < clipboard->count(); i++) {
-        EteraItem src = clipboard->at(i);
+    for(auto&& src: *clipboard) {
         QString dst = m_path + src.name();
 
         // нет смысла перемещать само в себя
@@ -832,8 +831,8 @@ void WidgetDisk::menu_delete_triggered() {
         m_tasks->addTask(parent, ROOT_MESSAGE_RM);
     }
 
-    for(int i = 0; i < selected.count(); i++) {
-        WidgetDiskItem* witem = static_cast<WidgetDiskItem*>(selected[i]);
+    for(auto&& item: selected) {
+        WidgetDiskItem* witem = static_cast<WidgetDiskItem*>(item);
         const EteraItem* eitem = witem->item();
 
         EteraAPI* api = createAPI();
@@ -933,10 +932,10 @@ void WidgetDisk::item_end_edit(QWidget* editor, QAbstractItemDelegate::EndEditHi
           << "\r"
           << "\n";
 
-    for(int i = 0; i < chars.count(); i++)
-        if(value.contains(chars[i]) == true) {
+    for(auto&& ch: chars)
+        if(value.contains(ch) == true) {
             witem->revertText();
-            QMessageBox::warning(this, ATTENTION_MESSAGE, ERROR_MESSAGE_RENAME_INVALID_CHAR.arg(chars[i]));
+            QMessageBox::warning(this, ATTENTION_MESSAGE, ERROR_MESSAGE_RENAME_INVALID_CHAR.arg(ch));
             return;
         }
 
@@ -1027,7 +1026,7 @@ void WidgetDisk::shareObjects(bool share) {
             m_tasks->addTask(parent, ROOT_MESSAGE_UNPUBLISH);
     }
 
-    for(int i = 0; i < count; i++) {
+    for(int i = 0; i < count; ++i) {
         WidgetDiskItem* witem = static_cast<WidgetDiskItem*>(selected[i]);
         const EteraItem* eitem = witem->item();
 
@@ -1246,9 +1245,9 @@ void WidgetDisk::dropEvent(QDropEvent* event) {
         QStringList list;
 
         QList<QUrl> urls = event->mimeData()->urls();
-        for(int i = 0; i < urls.count(); i++)
-            if(urls[i].scheme() == "file")
-                list.append(urls[i].toLocalFile());
+        for(auto&& url: urls)
+            if(url.scheme() == "file")
+                list.append(url.toLocalFile());
 
         if(list.isEmpty() == false)
             putLocalObjects(list);
@@ -1265,8 +1264,8 @@ void WidgetDisk::putLocalObjects(const QStringList& paths) {
     quint64 parent = EteraAPI::nextID();
     m_tasks->addTask(parent, ROOT_MESSAGE_UPLOAD);
 
-    for(int i = 0; i < paths.count(); i++)
-        putLocalObject(paths[i], parent);
+    for(auto&& path: paths)
+        putLocalObject(path, parent);
 
     m_tasks->checkTask(parent);
 }
@@ -1361,9 +1360,7 @@ void WidgetDisk::task_on_put_mkdir_success(EteraAPI* api) {
 void WidgetDisk::syncLocalDir(const QString& source, const QString& target, bool overwrite, quint64 parent) {
     QFileInfoList list = QDir(source).entryInfoList(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
-    for(int i = 0; i < list.count(); i++) {
-        QFileInfo info = list[i];
-
+    for(QFileInfo info: list) {
         if(info.isDir() == true)
             putLocalDir(info.absoluteFilePath(), target + "/" + info.fileName(), overwrite, parent);
         else if(info.isFile() == true)
@@ -1782,8 +1779,8 @@ void WidgetDisk::abortPutActivity(quint64 id, bool full) {
     removePutActivity(m_put_queue_mkdir, aborted);
     removePutActivity(m_put_queue_put, aborted);
 
-    for(int i = 0; i < aborted.count(); i++) {
-        EteraAPI* api = m_put_active_api_mkdir.value(aborted[i], NULL);
+    for(quint64 id: aborted) {
+        EteraAPI* api = m_put_active_api_mkdir.value(id, NULL);
         if(api != NULL) {
             removeDelayed(api);
             m_put_active_api_mkdir.remove(api->id());
@@ -1791,7 +1788,7 @@ void WidgetDisk::abortPutActivity(quint64 id, bool full) {
             releaseAPI(api);
         }
 
-        api = m_put_active_api_put.value(aborted[i], NULL);
+        api = m_put_active_api_put.value(id, NULL);
         if(api != NULL) {
             removeDelayed(api);
             m_put_active_api_put.remove(api->id());
@@ -1828,7 +1825,7 @@ void WidgetDisk::getRemoteObjects(const QString& path) {
     quint64 parent = EteraAPI::nextID();
     m_tasks->addTask(parent, ROOT_MESSAGE_DOWNLOAD);
 
-    for(int i = 0; i < count; i++) {
+    for(int i = 0; i < count; ++i) {
         WidgetDiskItem* witem = static_cast<WidgetDiskItem*>(selected[i]);
         const EteraItem* eitem = witem->item();
 
@@ -1996,9 +1993,7 @@ QMessageBox::StandardButton WidgetDisk::removeDir(QDir dir) {
 
     QFileInfoList list = dir.entryInfoList(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
-    for(int i = 0; i < list.count(); i++) {
-        QFileInfo info = list[i];
-
+    for(auto&& info: list) {
         if(info.isFile() == true || info.isSymLink() == true) {
             QMessageBox::StandardButton reply = QMessageBox::Retry;
             while(reply == QMessageBox::Retry && dir.remove(info.absoluteFilePath()) == false)
@@ -2054,9 +2049,7 @@ void WidgetDisk::task_on_get_dir_success(EteraAPI* api, const EteraItemList& lis
     if(api->deleted() == true)
         return;
 
-    for(int i = 0; i < list.count(); i++) {
-        EteraItem item = list[i];
-
+    for(auto&& item: list) {
         QMessageBox::StandardButton reply = QMessageBox::Ok;
         if(item.isDir() == true)
             reply = getRemoteDir(item.path(), api->target() + "/" + item.name(), api->id());
@@ -2160,8 +2153,8 @@ void WidgetDisk::abortGetActivity(quint64 id, bool full) {
     removeGetActivity(m_get_queue_ls, aborted);
     removeGetActivity(m_get_queue_get, aborted);
 
-    for(int i = 0; i < aborted.count(); i++) {
-        EteraAPI* api = m_get_active_api_ls.value(aborted[i], NULL);
+    for(quint64 id: aborted) {
+        EteraAPI* api = m_get_active_api_ls.value(id, NULL);
         if(api != NULL) {
             removeDelayed(api);
             m_get_active_api_ls.remove(api->id());
@@ -2169,7 +2162,7 @@ void WidgetDisk::abortGetActivity(quint64 id, bool full) {
             releaseAPI(api);
         }
 
-        api = m_get_active_api_get.value(aborted[i], NULL);
+        api = m_get_active_api_get.value(id, NULL);
         if(api != NULL) {
             removeDelayed(api);
             m_get_active_api_get.remove(api->id());
@@ -2333,22 +2326,11 @@ void WidgetDisk::emit_delayed_tasks() {
 //----------------------------------------------------------------------------------------------
 
 void WidgetDisk::removeDelayed(const EteraAPI* api) {
-    for(int i = 0; i < m_delayed_queue.count(); i++)
-        if(m_delayed_queue[i].API == api) {
-            m_delayed_queue.removeAt(i);
-            return;
-        }
-
-    for(int i = 0; i < m_delayed_stat_queue.count(); i++)
-        if(m_delayed_stat_queue[i].API == api) {
-            m_delayed_stat_queue.removeAt(i);
-            return;
-        }
-
-    for(int i = 0; i < m_delayed_task_queue.count(); i++)
-        if(m_delayed_task_queue[i].API == api) {
-            m_delayed_task_queue.removeAt(i);
-            return;
-        }
+    m_delayed_queue.erase(
+        std::ranges::find(m_delayed_queue, api, &EteraTaskSignal::API));
+    m_delayed_stat_queue.erase(
+        std::ranges::find(m_delayed_stat_queue, api, &EteraTaskSignalStat::API));
+    m_delayed_task_queue.erase(
+        std::ranges::find(m_delayed_task_queue, api, &EteraTaskSignal::API));
 }
 //----------------------------------------------------------------------------------------------

@@ -30,7 +30,7 @@ EteraClipboard::~EteraClipboard() {
 
 void EteraClipboard::removeByPath(const QString& path) {
     // оптимизировать O(n) при необходимости
-    for(int i = 0; i < count(); i++)
+    for(int i = 0; i < count(); ++i)
         if(at(i).path() == path) {
             removeAt(i);
             break;

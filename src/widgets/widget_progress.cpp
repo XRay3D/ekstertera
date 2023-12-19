@@ -10,10 +10,10 @@ WidgetProgressbar::WidgetProgressbar(QWidget* parent)
     m_value = 0;
     m_elapsed = 0;
 
-    m_layout = new QHBoxLayout(this);
+    m_layout = new QHBoxLayout{this};
     m_layout->setContentsMargins(3, 0, 3, 0);
 
-    m_bar = new QProgressBar(this);
+    m_bar = new QProgressBar{this};
     m_bar->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
     m_bar->setMinimum(0);
     m_layout->addWidget(m_bar, Qt::AlignJustify);

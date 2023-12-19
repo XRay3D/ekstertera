@@ -21,7 +21,7 @@ FormMainUI::FormMainUI()
     // центральный виджет
     //
 
-    m_widget_central = new QWidget(this);
+    m_widget_central = new QWidget{this};
     m_layout_central = new QVBoxLayout(m_widget_central);
 
     m_widget_path = new WidgetDiskPath(m_widget_central);
@@ -36,7 +36,7 @@ FormMainUI::FormMainUI()
     // меню
     //
 
-    m_menubar = new QMenuBar(this);
+    m_menubar = new QMenuBar{this};
 
     // верхний ряд меню
     m_menu_file = m_menubar->addMenu("");
@@ -114,7 +114,7 @@ FormMainUI::FormMainUI()
     // статусбар
     //
 
-    m_status_bar = new QStatusBar(this);
+    m_status_bar = new QStatusBar{this};
 
     m_label_used = new QLabel(m_status_bar);
     m_status_bar->addWidget(m_label_used);
@@ -129,7 +129,7 @@ FormMainUI::FormMainUI()
     setStatusBar(m_status_bar);
 
     // меню трея
-    m_tray_menu = new QMenu(this);
+    m_tray_menu = new QMenu{this};
     m_tray_menu_show = m_tray_menu->addAction(QIcon(":/icons/ekstertera16.png"), "");
     m_tray_menu->addSeparator();
     m_tray_menu->addAction(m_menu_file_exit);

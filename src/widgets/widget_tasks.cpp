@@ -116,7 +116,7 @@ void WidgetTasks::childIDs(quint64 id, QList<quint64>& ids) {
 //----------------------------------------------------------------------------------------------
 
 void WidgetTasks::childIDs(WidgetTasksItem* element, QList<quint64>& ids) {
-    for(int i = 0; i < element->childCount(); i++) {
+    for(int i = 0; i < element->childCount(); ++i) {
         WidgetTasksItem* item = static_cast<WidgetTasksItem*>(element->child(i));
         childIDs(item, ids);
     }

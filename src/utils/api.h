@@ -672,7 +672,7 @@ private:
     /*!
      * \brief Список строковых key/value для параметров запроса
      */
-    typedef QMap<QString, QString> EteraArgs;
+    typedef std::unordered_map<QString, QString> EteraArgs;
 
     /*!
      * \brief Подготовка запроса, установка стандартных заголовков

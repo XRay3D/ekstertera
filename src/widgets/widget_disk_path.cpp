@@ -3,8 +3,12 @@
 
 WidgetDiskPath::WidgetDiskPath(QWidget* parent)
     : QWidget(parent) {
-    setMinimumHeight(36);
+    setMinimumHeight(24);
     setMaximumHeight(24);
+    m_layout = new QHBoxLayout{this};
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setSpacing(0);
+    m_layout->setAlignment(Qt::AlignLeft);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -13,35 +17,30 @@ WidgetDiskPath::~WidgetDiskPath() {
 //----------------------------------------------------------------------------------------------
 
 void WidgetDiskPath::changePath(const QString& path) {
-    for(int i = 0; i < m_buttons.count(); i++)
-        delete m_buttons[i];
-
+    qDeleteAll(m_buttons);
     m_buttons.clear();
 
     QString patrial;
     QStringList parts = path.split("/");
 
-    for(int i = 0; i < parts.count(); i++) {
-        if(parts[i].isEmpty() == true)
+    for(auto&& path: parts) {
+
+        if(path.isEmpty() == true)
             continue;
 
-        QToolButton* button = new QToolButton(this);
+        QToolButton* button = new QToolButton{this};
 
-        if(i == 0)
-            button->move(0, 0);
-        else
-            button->move(m_buttons[i - 1]->geometry().right() + 1, 0);
-
-        button->setText(parts[i]);
+        button->setText(path);
         button->setFocusPolicy(Qt::NoFocus);
         button->setVisible(true);
 
-        patrial += parts[i] + "/";
+        patrial += path + "/";
         button->setProperty("path", patrial);
 
         connect(button, &QToolButton::clicked, this, &WidgetDiskPath::button_clicked);
 
         m_buttons.append(button);
+        m_layout->addWidget(button);
     }
 }
 //----------------------------------------------------------------------------------------------

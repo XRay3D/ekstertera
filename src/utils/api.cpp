@@ -2,9 +2,9 @@
 //----------------------------------------------------------------------------------------------
 #include <unistd.h>
 //----------------------------------------------------------------------------------------------
-#define ETERA_API_CONNECT_REPLY_FINISHED(x)    connect(m_reply, SIGNAL(finished()), SLOT(x()))
-#define ETERA_API_CONNECT_UPLOAD_PROGRESS(x)   connect(m_reply, SIGNAL(uploadProgress(qint64, qint64)), SLOT(x(qint64, qint64)))
-#define ETERA_API_CONNECT_DOWNLOAD_PROGRESS(x) connect(m_reply, SIGNAL(downloadProgress(qint64, qint64)), SLOT(x(qint64, qint64)))
+// #define ETERA_API_CONNECT_REPLY_FINISHED(x)    connect(m_reply, &QNetworkReply::finished, this, &EteraAPI::x)
+// #define ETERA_API_CONNECT_UPLOAD_PROGRESS(x)   connect(m_reply, &QNetworkReply::uploadProgress, this, &EteraAPI::x)
+// #define ETERA_API_CONNECT_DOWNLOAD_PROGRESS(x) connect(m_reply, &QNetworkReply::downloadProgress, this, &EteraAPI::x)
 //----------------------------------------------------------------------------------------------
 /*!
  * \brief Флаг разрешения работы api
@@ -235,7 +235,7 @@ void EteraAPI::init() {
 
     const char** ciphers = ETERA_CIPHERS;
     while((*ciphers) != NULL) {
-        QSslCipher cipher(*ciphers, QSsl::SslV3);
+        QSslCipher cipher(*ciphers, QSsl::SslProtocol::TlsV1_0); // FIXME QSsl::SslV3);
         if(cipher.isNull() == false)
             cipher_list.append(cipher);
 
@@ -308,13 +308,13 @@ EteraAPI::EteraAPI(QObject* parent, quint64 id)
     m_tick = 0;
     m_prev_tick = 0;
 
-    m_tick_timer = new QTimer(this);
+    m_tick_timer = new QTimer{this};
 
     retranslateUi();
 
     resetLastError();
 
-    connect(m_tick_timer, SIGNAL(timeout()), this, SLOT(on_tick_timer()));
+    connect(m_tick_timer, &QTimer::timeout, this, &EteraAPI::on_tick_timer);
     m_tick_timer->start(30000); /* TODO: #2 */
 }
 //----------------------------------------------------------------------------------------------
@@ -434,8 +434,8 @@ void EteraAPI::on_progress(qint64 done, qint64 total) {
 
 void EteraAPI::on_ssl_errors(const QList<QSslError>& errors) {
     QString message;
-    for(int i = 0; i < errors.count(); i++)
-        message += errors[i].errorString() + "\n";
+    for(auto&& error: errors)
+        message += error.errorString() + "\n";
 
     setLastError(1, message);
 }
@@ -509,11 +509,11 @@ void EteraAPI::prepareRequest(QNetworkRequest& request, const QString& relurl, c
     QUrlQuery query;
 #endif
 
-    for(EteraArgs::const_iterator i = args.constBegin(); i != args.constEnd(); ++i)
+    for(auto&& [key, value]: args)
 #if QT_VERSION < 0x050000
         url.addEncodedQueryItem(i.key().toUtf8(), QUrl::toPercentEncoding(i.value()));
 #else
-        query.addQueryItem(i.key(), QUrl::toPercentEncoding(i.value()));
+        query.addQueryItem(key, QUrl::toPercentEncoding(value));
 #endif
 
 #if QT_VERSION >= 0x050000
@@ -568,10 +568,10 @@ bool EteraAPI::startRequest(const QNetworkRequest& request, EteraRequestMethod m
     m_io = io;
     m_reply = reply;
 
-    QObject::connect(reply, SIGNAL(sslErrors(const QList<QSslError>&)), SLOT(on_ssl_errors(const QList<QSslError>&)));
+    QObject::connect(reply, &QNetworkReply::sslErrors, this, &EteraAPI::on_ssl_errors);
 
     if(method == ermGET && io != NULL)
-        QObject::connect(reply, SIGNAL(readyRead()), SLOT(on_ready_read()));
+        QObject::connect(reply, &QNetworkReply::readyRead, this, &EteraAPI::on_ready_read);
 
     return true;
 }
@@ -651,7 +651,7 @@ void EteraAPI::getToken(const QString& auth_code) {
     request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
 
     if(startRequest(request, ermPOST, oauth_data) == true)
-        ETERA_API_CONNECT_REPLY_FINISHED(on_token_finished);
+        connectReplyFinished(&EteraAPI::on_token_finished);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -786,7 +786,7 @@ bool EteraAPI::parseWait(bool& wait) {
 
 void EteraAPI::info() {
     if(startSimpleRequest("") == true)
-        ETERA_API_CONNECT_REPLY_FINISHED(on_info_finished);
+        connectReplyFinished(&EteraAPI::on_info_finished);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -833,7 +833,7 @@ void EteraAPI::stat(const QString& path, const QString& preview, bool crop) {
     m_crop = crop;
 
     if(startSimpleRequest("/resources", args) == true)
-        ETERA_API_CONNECT_REPLY_FINISHED(on_stat_finished);
+        connectReplyFinished(&EteraAPI::on_stat_finished);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -884,7 +884,7 @@ void EteraAPI::ls(const QString& path, const QString& preview, bool crop, quint6
     m_limit = limit;
 
     if(startSimpleRequest("/resources", args) == true)
-        ETERA_API_CONNECT_REPLY_FINISHED(on_ls_finished);
+        connectReplyFinished(&EteraAPI::on_ls_finished);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -959,7 +959,7 @@ void EteraAPI::mkdir(const QString& path) {
     m_path = path;
 
     if(startSimpleRequest("/resources", args, ermPUT) == true)
-        ETERA_API_CONNECT_REPLY_FINISHED(on_mkdir_finished);
+        connectReplyFinished(&EteraAPI::on_mkdir_finished);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -989,7 +989,7 @@ void EteraAPI::rm(const QString& path, bool permanently) {
     m_permanently = permanently;
 
     if(startSimpleRequest("/resources", args, ermDELETE) == true)
-        ETERA_API_CONNECT_REPLY_FINISHED(on_rm_finished);
+        connectReplyFinished(&EteraAPI::on_rm_finished);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -1008,7 +1008,7 @@ void EteraAPI::on_rm_finished() {
     } else if(code == 202) {
         // 202 Accepted (удаление папки начато)
         if(startWait(body) == true)
-            ETERA_API_CONNECT_REPLY_FINISHED(on_rm_wait_finished);
+            connectReplyFinished(&EteraAPI::on_rm_wait_finished);
     } else
         setLastError(code, body);
 }
@@ -1021,7 +1021,7 @@ void EteraAPI::on_rm_wait_finished() {
 
     if(wait == true) {
         if(startWait(m_link) == true)
-            ETERA_API_CONNECT_REPLY_FINISHED(on_rm_wait_finished);
+            connectReplyFinished(&EteraAPI::on_rm_wait_finished);
     } else
         emit onRM(this);
 }
@@ -1041,7 +1041,7 @@ void EteraAPI::cp(const QString& source, const QString& target, bool overwrite) 
     m_overwrite = overwrite;
 
     if(startSimpleRequest("/resources/copy", args, ermPOST) == true)
-        ETERA_API_CONNECT_REPLY_FINISHED(on_cp_finished);
+        connectReplyFinished(&EteraAPI::on_cp_finished);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -1060,7 +1060,7 @@ void EteraAPI::on_cp_finished() {
     } else if(code == 202) {
         // 202 Accepted (копирование папки начато)
         if(startWait(body) == true)
-            ETERA_API_CONNECT_REPLY_FINISHED(on_cp_wait_finished);
+            connectReplyFinished(&EteraAPI::on_cp_wait_finished);
     } else
         setLastError(code, body);
 }
@@ -1073,7 +1073,7 @@ void EteraAPI::on_cp_wait_finished() {
 
     if(wait == true) {
         if(startWait(m_link) == true)
-            ETERA_API_CONNECT_REPLY_FINISHED(on_cp_wait_finished);
+            connectReplyFinished(&EteraAPI::on_cp_wait_finished);
     } else
         emit onCP(this);
 }
@@ -1093,7 +1093,7 @@ void EteraAPI::mv(const QString& source, const QString& target, bool overwrite) 
     m_overwrite = overwrite;
 
     if(startSimpleRequest("/resources/move", args, ermPOST) == true)
-        ETERA_API_CONNECT_REPLY_FINISHED(on_mv_finished);
+        connectReplyFinished(&EteraAPI::on_mv_finished);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -1112,7 +1112,7 @@ void EteraAPI::on_mv_finished() {
     } else if(code == 202) {
         // 202 Accepted (перемещение папки начато)
         if(startWait(body) == true)
-            ETERA_API_CONNECT_REPLY_FINISHED(on_mv_wait_finished);
+            connectReplyFinished(&EteraAPI::on_mv_wait_finished);
     } else
         setLastError(code, body);
 }
@@ -1125,7 +1125,7 @@ void EteraAPI::on_mv_wait_finished() {
 
     if(wait == true) {
         if(startWait(m_link) == true)
-            ETERA_API_CONNECT_REPLY_FINISHED(on_mv_wait_finished);
+            connectReplyFinished(&EteraAPI::on_mv_wait_finished);
     } else
         emit onMV(this);
 }
@@ -1144,7 +1144,7 @@ void EteraAPI::put(const QString& source, const QString& target, bool overwrite)
     m_overwrite = overwrite;
 
     if(startSimpleRequest("/resources/upload", args, ermGET) == true)
-        ETERA_API_CONNECT_REPLY_FINISHED(on_put_file_finished);
+        connectReplyFinished(&EteraAPI::on_put_file_finished);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -1191,9 +1191,9 @@ void EteraAPI::put(const QString& url, QIODevice* device) {
     m_device = device;
 
     if(startRequest(request, ermPUT, "", device) == true) {
-        ETERA_API_CONNECT_UPLOAD_PROGRESS(on_progress);
-        ETERA_API_CONNECT_DOWNLOAD_PROGRESS(on_progress);
-        ETERA_API_CONNECT_REPLY_FINISHED(on_put_url_finished);
+        connectUploadProgress(&EteraAPI::on_progress);
+        connectDownloadProgress(&EteraAPI::on_progress);
+        connectReplyFinished(&EteraAPI::on_put_url_finished);
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -1227,7 +1227,7 @@ void EteraAPI::get(const QString& source, const QString& target) {
     m_device = NULL;
 
     if(startSimpleRequest("/resources/download", args, ermGET) == true)
-        ETERA_API_CONNECT_REPLY_FINISHED(on_get_file_finished);
+        connectReplyFinished(&EteraAPI::on_get_file_finished);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -1270,7 +1270,7 @@ void EteraAPI::get(const QString& url, QIODevice* device) {
     setDefaultHeaders(request, 0, true, true);
 
     if(device == NULL) {
-        device = new QBuffer(this);
+        device = new QBuffer{this};
         if(device->open(QIODevice::WriteOnly | QIODevice::Truncate) == false) {
             setLastError(static_cast<QFile*>(m_device)->error(), FILE_OPEN_ERROR);
             return;
@@ -1281,9 +1281,9 @@ void EteraAPI::get(const QString& url, QIODevice* device) {
     m_device = device;
 
     if(startRequest(request, ermGET, "", device) == true) {
-        ETERA_API_CONNECT_UPLOAD_PROGRESS(on_progress);
-        ETERA_API_CONNECT_DOWNLOAD_PROGRESS(on_progress);
-        ETERA_API_CONNECT_REPLY_FINISHED(on_get_url_finished);
+        connectUploadProgress(&EteraAPI::on_progress);
+        connectDownloadProgress(&EteraAPI::on_progress);
+        connectReplyFinished(&EteraAPI::on_get_url_finished);
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -1321,7 +1321,7 @@ void EteraAPI::publish(const QString& path) {
     m_path = path;
 
     if(startSimpleRequest("/resources/publish", args, ermPUT) == true)
-        ETERA_API_CONNECT_REPLY_FINISHED(on_publish_finished);
+        connectReplyFinished(&EteraAPI::on_publish_finished);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -1351,7 +1351,7 @@ void EteraAPI::unpublish(const QString& path) {
     m_path = path;
 
     if(startSimpleRequest("/resources/unpublish", args, ermPUT) == true)
-        ETERA_API_CONNECT_REPLY_FINISHED(on_unpublish_finished);
+        connectReplyFinished(&EteraAPI::on_unpublish_finished);
 }
 //----------------------------------------------------------------------------------------------
 

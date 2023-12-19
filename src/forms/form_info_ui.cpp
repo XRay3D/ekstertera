@@ -9,64 +9,64 @@ FormInfoUI::FormInfoUI(QWidget* parent)
 
     setWindowTitle(tr("Свойства"));
 
-    m_layout = new QFormLayout(this);
+    m_layout = new QFormLayout{this};
     m_layout->setLabelAlignment(Qt::AlignRight);
 
-    m_label_name = new QLabel(this);
-    m_label_path = new QLabel(this);
-    m_label_type = new QLabel(this);
-    m_label_created = new QLabel(this);
-    m_label_modified = new QLabel(this);
-    m_label_size = new QLabel(this);
-    m_label_md5 = new QLabel(this);
-    m_label_sha256 = new QLabel(this);
-    m_label_media = new QLabel(this);
-    m_label_mime = new QLabel(this);
-    m_label_public_url = new QLabel(this);
+    m_label_name = new QLabel{this};
+    m_label_path = new QLabel{this};
+    m_label_type = new QLabel{this};
+    m_label_created = new QLabel{this};
+    m_label_modified = new QLabel{this};
+    m_label_size = new QLabel{this};
+    m_label_md5 = new QLabel{this};
+    m_label_sha256 = new QLabel{this};
+    m_label_media = new QLabel{this};
+    m_label_mime = new QLabel{this};
+    m_label_public_url = new QLabel{this};
 
     Qt::TextInteractionFlags flags = Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard;
 
-    m_text_name = new QLabel(this);
+    m_text_name = new QLabel{this};
     m_text_name->setTextInteractionFlags(flags);
     m_layout->addRow(m_label_name, m_text_name);
 
-    m_text_path = new QLabel(this);
+    m_text_path = new QLabel{this};
     m_text_path->setTextInteractionFlags(flags);
     m_layout->addRow(m_label_path, m_text_path);
 
-    m_text_type = new QLabel(this);
+    m_text_type = new QLabel{this};
     m_text_type->setTextInteractionFlags(flags);
     m_layout->addRow(m_label_type, m_text_type);
 
-    m_text_created = new QLabel(this);
+    m_text_created = new QLabel{this};
     m_text_created->setTextInteractionFlags(flags);
     m_layout->addRow(m_label_created, m_text_created);
 
-    m_text_modified = new QLabel(this);
+    m_text_modified = new QLabel{this};
     m_text_modified->setTextInteractionFlags(flags);
     m_layout->addRow(m_label_modified, m_text_modified);
 
-    m_text_size = new QLabel(this);
+    m_text_size = new QLabel{this};
     m_text_size->setTextInteractionFlags(flags);
     m_layout->addRow(m_label_size, m_text_size);
 
-    m_text_md5 = new QLabel(this);
+    m_text_md5 = new QLabel{this};
     m_text_md5->setTextInteractionFlags(flags);
     m_layout->addRow(m_label_md5, m_text_md5);
 
-    m_text_sha256 = new QLabel(this);
+    m_text_sha256 = new QLabel{this};
     m_text_sha256->setTextInteractionFlags(flags);
     m_layout->addRow(m_label_sha256, m_text_sha256);
 
-    m_text_media = new QLabel(this);
+    m_text_media = new QLabel{this};
     m_text_media->setTextInteractionFlags(flags);
     m_layout->addRow(m_label_media, m_text_media);
 
-    m_text_mime = new QLabel(this);
+    m_text_mime = new QLabel{this};
     m_text_mime->setTextInteractionFlags(flags);
     m_layout->addRow(m_label_mime, m_text_mime);
 
-    m_text_public_url = new QLabel(this);
+    m_text_public_url = new QLabel{this};
     m_text_public_url->setTextInteractionFlags(flags);
     m_layout->addRow(m_label_public_url, m_text_public_url);
 

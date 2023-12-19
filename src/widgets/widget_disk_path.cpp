@@ -3,8 +3,8 @@
 
 WidgetDiskPath::WidgetDiskPath(QWidget* parent)
     : QWidget(parent) {
-    setMinimumHeight(24);
-    // setMaximumHeight(24);
+    setMinimumHeight(36);
+    setMaximumHeight(24);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ void WidgetDiskPath::changePath(const QString& path) {
         patrial += parts[i] + "/";
         button->setProperty("path", patrial);
 
-        connect(button, SIGNAL(clicked()), this, SLOT(button_clicked()));
+        connect(button, &QToolButton::clicked, this, &WidgetDiskPath::button_clicked);
 
         m_buttons.append(button);
     }

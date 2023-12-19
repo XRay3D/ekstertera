@@ -71,7 +71,7 @@ WidgetTrayIcon::WidgetTrayIcon(QObject* parent)
 
     if(m_type == Qt) {
         m_icon = new QSystemTrayIcon(this);
-        connect(m_icon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(icon_activated(QSystemTrayIcon::ActivationReason)));
+        connect(m_icon, &QSystemTrayIcon::activated, this, &WidgetTrayIcon::icon_activated);
     }
 }
 //----------------------------------------------------------------------------------------------

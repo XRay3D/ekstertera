@@ -80,25 +80,25 @@ WidgetDisk::WidgetDisk(QWidget* parent)
 
     m_menu_info = m_menu->addAction(QIcon::fromTheme("document-properties", QIcon(":/icons/tango/document-properties.svg")), "");
 
-    connect(m_menu_open, SIGNAL(triggered()), this, SLOT(menu_open_triggered()));
-    connect(m_menu_new, SIGNAL(triggered()), this, SLOT(menu_new_triggered()));
-    connect(m_menu_cut, SIGNAL(triggered()), this, SLOT(menu_cut_triggered()));
-    connect(m_menu_copy, SIGNAL(triggered()), this, SLOT(menu_copy_triggered()));
-    connect(m_menu_paste, SIGNAL(triggered()), this, SLOT(menu_paste_triggered()));
-    connect(m_menu_delete, SIGNAL(triggered()), this, SLOT(menu_delete_triggered()));
-    connect(m_menu_rename, SIGNAL(triggered()), this, SLOT(menu_rename_triggered()));
-    connect(m_menu_share, SIGNAL(triggered()), this, SLOT(menu_share_triggered()));
-    connect(m_menu_revoke, SIGNAL(triggered()), this, SLOT(menu_revoke_triggered()));
-    connect(m_menu_info, SIGNAL(triggered()), this, SLOT(menu_info_triggered()));
+    connect(m_menu_open, &QAction::triggered, this, &WidgetDisk::menu_open_triggered);
+    connect(m_menu_new, &QAction::triggered, this, &WidgetDisk::menu_new_triggered);
+    connect(m_menu_cut, &QAction::triggered, this, &WidgetDisk::menu_cut_triggered);
+    connect(m_menu_copy, &QAction::triggered, this, &WidgetDisk::menu_copy_triggered);
+    connect(m_menu_paste, &QAction::triggered, this, &WidgetDisk::menu_paste_triggered);
+    connect(m_menu_delete, &QAction::triggered, this, &WidgetDisk::menu_delete_triggered);
+    connect(m_menu_rename, &QAction::triggered, this, &WidgetDisk::menu_rename_triggered);
+    connect(m_menu_share, &QAction::triggered, this, &WidgetDisk::menu_share_triggered);
+    connect(m_menu_revoke, &QAction::triggered, this, &WidgetDisk::menu_revoke_triggered);
+    connect(m_menu_info, &QAction::triggered, this, &WidgetDisk::menu_info_triggered);
 
     // события виджета проводника диска
-    connect(m_explorer, SIGNAL(itemSelectionChanged()), this, SLOT(on_item_selection_changed()));
-    connect(m_explorer, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(item_activated(QListWidgetItem*)));
-    connect(m_explorer, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(custom_context_menu_requested(const QPoint&)));
-    connect(m_explorer->itemDelegate(), SIGNAL(closeEditor(QWidget*, QAbstractItemDelegate::EndEditHint)), this, SLOT(item_end_edit(QWidget*, QAbstractItemDelegate::EndEditHint)));
+    connect(m_explorer, &QListWidget::itemSelectionChanged, this, &WidgetDisk::on_item_selection_changed);
+    connect(m_explorer, &QListWidget::itemActivated, this, &WidgetDisk::item_activated);
+    connect(m_explorer, &QListWidget::customContextMenuRequested, this, &WidgetDisk::custom_context_menu_requested);
+    connect(m_explorer->itemDelegate(), &QAbstractItemDelegate::closeEditor, this, &WidgetDisk::item_end_edit);
 
     // события виджета асинхронных задач
-    connect(m_tasks, SIGNAL(onChangeCount(int)), this, SLOT(widget_tasks_on_change_count(int)));
+    connect(m_tasks, &WidgetTasks::onChangeCount, this, &WidgetDisk::widget_tasks_on_change_count);
 
     // локализация
     retranslateUi();
@@ -108,7 +108,7 @@ WidgetDisk::WidgetDisk(QWidget* parent)
 
     // таймер отложенных сигналов / задач
     m_emit_timer = new QTimer(this);
-    connect(m_emit_timer, SIGNAL(timeout()), SLOT(emit_delayed_signals()));
+    connect(m_emit_timer, &QTimer::timeout, this, &WidgetDisk::emit_delayed_signals);
     m_emit_timer->start(10000); /* TODO: #2 */
 }
 //----------------------------------------------------------------------------------------------

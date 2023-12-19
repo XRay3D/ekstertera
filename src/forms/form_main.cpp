@@ -8,36 +8,36 @@
 FormMain::FormMain()
     : FormMainUI() {
     // меню "Файл"
-    connect(m_menu_file_exit, SIGNAL(triggered()), this, SLOT(menu_file_exit_triggered()));
+    connect(m_menu_file_exit, &QAction::triggered, this, &FormMain::menu_file_exit_triggered);
 
     // меню "Параметры"
-    connect(m_menu_edit_settings, SIGNAL(triggered()), this, SLOT(menu_edit_settings_triggered()));
+    connect(m_menu_edit_settings, &QAction::triggered, this, &FormMain::menu_edit_settings_triggered);
 
     // меню "Вид"
-    connect(m_menu_view_refresh, SIGNAL(triggered()), this, SLOT(menu_view_refresh_triggered()));
-    connect(m_menu_view_zoom_in, SIGNAL(triggered()), this, SLOT(menu_view_zoom_in_triggered()));
-    connect(m_menu_view_zoom_out, SIGNAL(triggered()), this, SLOT(menu_view_zoom_out_triggered()));
-    connect(m_menu_view_preview, SIGNAL(changed()), this, SLOT(menu_view_preview_changed()));
+    connect(m_menu_view_refresh, &QAction::triggered, this, &FormMain::menu_view_refresh_triggered);
+    connect(m_menu_view_zoom_in, &QAction::triggered, this, &FormMain::menu_view_zoom_in_triggered);
+    connect(m_menu_view_zoom_out, &QAction::triggered, this, &FormMain::menu_view_zoom_out_triggered);
+    connect(m_menu_view_preview, &QAction::changed, this, &FormMain::menu_view_preview_changed);
 
     // меню "?"
-    connect(m_menu_about, SIGNAL(triggered()), this, SLOT(menu_help_about_triggered()));
-    connect(m_menu_about_qt, SIGNAL(triggered()), this, SLOT(menu_help_about_qt_triggered()));
+    connect(m_menu_about, &QAction::triggered, this, &FormMain::menu_help_about_triggered);
+    connect(m_menu_about_qt, &QAction::triggered, this, &FormMain::menu_help_about_qt_triggered);
 
     // иконка трея
-    connect(m_tray_icon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(tray_icon_activated(QSystemTrayIcon::ActivationReason)));
-    connect(m_tray_menu_show, SIGNAL(triggered()), this, SLOT(tray_menu_show_triggered()));
+    connect(m_tray_icon, &WidgetTrayIcon::activated, this, &FormMain::tray_icon_activated);
+    connect(m_tray_menu_show, &QAction::triggered, this, &FormMain::tray_menu_show_triggered);
 
     // тулбар
-    connect(m_action_upload, SIGNAL(triggered()), this, SLOT(action_upload_triggered()));
-    connect(m_action_download, SIGNAL(triggered()), this, SLOT(action_download_triggered()));
+    connect(m_action_upload, &QAction::triggered, this, &FormMain::action_upload_triggered);
+    connect(m_action_download, &QAction::triggered, this, &FormMain::action_download_triggered);
 
     // виджет пути
-    connect(m_widget_path, SIGNAL(onPathChangeRequest(const QString&)), this, SLOT(widget_path_on_path_change_request(const QString&)));
+    connect(m_widget_path, &WidgetDiskPath::onPathChangeRequest, this, &FormMain::widget_path_on_path_change_request);
 
     // виджет диска
-    connect(m_widget_disk, SIGNAL(onPathChanged(const QString&)), this, SLOT(widget_disk_on_path_changed(const QString&)));
-    connect(m_widget_disk, SIGNAL(onChangePossibleActions(bool)), this, SLOT(widget_disk_on_change_possible_actions(bool)));
-    connect(m_widget_disk, SIGNAL(onSelectionChanged(int, int, quint64)), this, SLOT(widget_disk_on_selection_changed(int, int, quint64)));
+    connect(m_widget_disk, &WidgetDisk::onPathChanged, this, &FormMain::widget_disk_on_path_changed);
+    connect(m_widget_disk, &WidgetDisk::onChangePossibleActions, this, &FormMain::widget_disk_on_change_possible_actions);
+    connect(m_widget_disk, &WidgetDisk::onSelectionChanged, this, &FormMain::widget_disk_on_selection_changed);
 
     // обновление статуса
     updateInfoStatus();

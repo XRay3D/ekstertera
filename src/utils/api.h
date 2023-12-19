@@ -880,6 +880,11 @@ signals:
      * \param api API
      */
     void onUNPUBLISH(EteraAPI* api);
+
+private:
+    void connectDownloadProgress(void (EteraAPI::*x)(qint64, qint64)) { connect(m_reply, &QNetworkReply::downloadProgress, this, x); }
+    void connectUploadProgress(void (EteraAPI::*x)(qint64, qint64)) { connect(m_reply, &QNetworkReply::uploadProgress, this, x); }
+    void connectReplyFinished(void (EteraAPI::*x)()) { connect(m_reply, &QNetworkReply::finished, this, x); }
 };
 
 //

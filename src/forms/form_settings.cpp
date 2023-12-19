@@ -18,11 +18,11 @@ FormSettings::FormSettings(QWidget* parent)
 
     m_close_to_tray->setChecked(settings->closeToTray());
 
-    connect(m_button_cancel, SIGNAL(clicked()), this, SLOT(button_cancel_clicked()));
-    connect(m_button_ok, SIGNAL(clicked()), this, SLOT(button_ok_clicked()));
+    connect(m_button_cancel, &QPushButton::clicked, this, &FormSettings::button_cancel_clicked);
+    connect(m_button_ok, &QPushButton::clicked, this, &FormSettings::button_ok_clicked);
 
-    connect(m_combo_language, SIGNAL(currentIndexChanged(int)), this, SLOT(combo_language_current_index_changed(int)));
-    connect(m_button_token, SIGNAL(clicked()), this, SLOT(button_token_clicked()));
+    connect(m_combo_language, &QComboBox::currentIndexChanged, this, &FormSettings::combo_language_current_index_changed);
+    connect(m_button_token, &QPushButton::clicked, this, &FormSettings::button_token_clicked);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -80,8 +80,8 @@ void FormSettings::button_token_clicked() {
         return;
     }
 
-    connect(api, SIGNAL(onError(EteraAPI*)), this, SLOT(task_on_token_error(EteraAPI*)));
-    connect(api, SIGNAL(onTOKEN(EteraAPI*, const QString&)), this, SLOT(task_on_token_success(EteraAPI*, const QString&)));
+    connect(api, &EteraAPI::onError, this, &FormSettings::task_on_token_error);
+    connect(api, &EteraAPI::onTOKEN, this, &FormSettings::task_on_token_success);
 
     api->getToken(auth_code);
 }

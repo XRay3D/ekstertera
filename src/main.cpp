@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
     FormMain* form = new FormMain();
     form->show();
 
-    app.connect(&app, SIGNAL(lastWindowClosed()), &app, SLOT(quit()));
+    app.connect(&app, &QApplication::lastWindowClosed, &app, &QApplication::quit);
 
     int retval = app.exec();
 

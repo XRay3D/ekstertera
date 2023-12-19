@@ -26,6 +26,11 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 #mainwindow.ui
 #)
 
+add_definitions(
+    # -DQT_MESSAGELOGCONTEXT# qDebug()
+    -DQT_DISABLE_DEPRECATED_BEFORE=0x060000
+)
+
 set(DIRS "src")#"3dparty/json")
 foreach(X IN LISTS DIRS)
     file(GLOB_RECURSE PROJECT_SOURCES

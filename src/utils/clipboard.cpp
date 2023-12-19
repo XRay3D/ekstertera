@@ -1,6 +1,6 @@
 #include "clipboard.h"
 //----------------------------------------------------------------------------------------------
-static EteraClipboard* g_clipboard = NULL;
+static EteraClipboard* g_clipboard = nullptr;
 //----------------------------------------------------------------------------------------------
 
 void EteraClipboard::init() {

@@ -5,14 +5,9 @@ WidgetDiskPath::WidgetDiskPath(QWidget* parent)
     : QWidget(parent) {
     setMinimumHeight(24);
     setMaximumHeight(24);
-    m_layout = new QHBoxLayout{this};
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(0);
     m_layout->setAlignment(Qt::AlignLeft);
-}
-//----------------------------------------------------------------------------------------------
-
-WidgetDiskPath::~WidgetDiskPath() {
 }
 //----------------------------------------------------------------------------------------------
 
@@ -21,7 +16,7 @@ void WidgetDiskPath::changePath(const QString& path) {
     m_buttons.clear();
 
     QString patrial;
-    QStringList parts = path.split("/");
+    QStringList parts = path.split('/');
 
     for(auto&& path: parts) {
 
@@ -34,7 +29,7 @@ void WidgetDiskPath::changePath(const QString& path) {
         button->setFocusPolicy(Qt::NoFocus);
         button->setVisible(true);
 
-        patrial += path + "/";
+        patrial += path + '/';
         button->setProperty("path", patrial);
 
         connect(button, &QToolButton::clicked, this, &WidgetDiskPath::button_clicked);

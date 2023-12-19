@@ -217,7 +217,7 @@ private:
 
     /*!
      * \brief Освобождение экземпляра API и удаление id задачи из списка задач
-     * \param api API (может быть NULL)
+     * \param api API (может быть nullptr)
      */
     void releaseAPI(EteraAPI* api);
 
@@ -230,7 +230,7 @@ private:
     /*!
      * \brief Поиск элемента в виджете файлов и директорий
      * \param path Путь к элементу
-     * \return Виджет или NULL
+     * \return Виджет или nullptr
      */
     WidgetDiskItem* findByPath(const QString& path);
 
@@ -371,9 +371,9 @@ private:
     /*!
      * \brief Запуск get активностей
      * \param type Тип активности, которая была завершена параметром api
-     * \param api API для удаления или NULL для активности apatUnknown
+     * \param api API для удаления или nullptr для активности apatUnknown
      */
-    void spawnPutActivity(EteraPutActivityType type, EteraAPI* api = NULL);
+    void spawnPutActivity(EteraPutActivityType type, EteraAPI* api = nullptr);
 
     /*!
      * \brief Остановка put активностей
@@ -431,9 +431,9 @@ private:
     /*!
      * \brief Запуск get активностей
      * \param type Тип активности, которая была завершена параметром api
-     * \param api API для удаления или NULL для активности agatUnknown
+     * \param api API для удаления или nullptr для активности agatUnknown
      */
-    void spawnGetActivity(EteraGetActivityType type, EteraAPI* api = NULL);
+    void spawnGetActivity(EteraGetActivityType type, EteraAPI* api = nullptr);
 
     /*!
      * \brief Остановка get активностей

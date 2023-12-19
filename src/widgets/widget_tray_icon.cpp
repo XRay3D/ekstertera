@@ -6,15 +6,15 @@
 WidgetTrayIcon::WidgetTrayIcon(QObject* parent)
     : QObject(parent) {
     m_visible = false;
-    m_icon = NULL;
-    m_gtk_menu = NULL;
+    m_icon = nullptr;
+    m_gtk_menu = nullptr;
 
 #ifdef ETERA_CUSTOM_TRAY_ICON_UNITY
-    m_app_indicator = NULL;
+    m_app_indicator = nullptr;
 #endif
 
 #ifdef ETERA_CUSTOM_TRAY_ICON_GTK
-    m_gtk_icon = NULL;
+    m_gtk_icon = nullptr;
 #endif
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
@@ -36,7 +36,7 @@ WidgetTrayIcon::WidgetTrayIcon(QObject* parent)
 
 #ifdef ETERA_CUSTOM_TRAY_ICON_UNITY
     if(m_type == Unity) {
-        if(gtk_init_check(NULL, NULL) == TRUE) {
+        if(gtk_init_check(nullptr, nullptr) == TRUE) {
             QString icon_path = QDir::homePath() + "/.local/share/icons";
 
             QDir dir;
@@ -45,7 +45,7 @@ WidgetTrayIcon::WidgetTrayIcon(QObject* parent)
 
             if(m_type != Qt) {
                 m_app_indicator = app_indicator_new_with_path(ETERA_APP_NAME, ETERA_APP_NAME, APP_INDICATOR_CATEGORY_APPLICATION_STATUS, icon_path.toUtf8().constData());
-                if(m_app_indicator == NULL)
+                if(m_app_indicator == nullptr)
                     m_type = Qt;
             }
         } else
@@ -54,9 +54,9 @@ WidgetTrayIcon::WidgetTrayIcon(QObject* parent)
 #endif
 #ifdef ETERA_CUSTOM_TRAY_ICON_GTK
         if(m_type == Gtk) {
-        if(gtk_init_check(NULL, NULL) == TRUE) {
+        if(gtk_init_check(nullptr, nullptr) == TRUE) {
             m_gtk_icon = gtk_status_icon_new();
-            if(m_gtk_icon != NULL) {
+            if(m_gtk_icon != nullptr) {
                 m_visible = true;
 
                 g_signal_connect(m_gtk_icon, "activate", G_CALLBACK(gtk_icon_activate), this);
@@ -77,16 +77,16 @@ WidgetTrayIcon::WidgetTrayIcon(QObject* parent)
 //----------------------------------------------------------------------------------------------
 
 WidgetTrayIcon::~WidgetTrayIcon() {
-    if(m_gtk_menu != NULL)
+    if(m_gtk_menu != nullptr)
         gtk_widget_destroy(m_gtk_menu);
 
 #ifdef ETERA_CUSTOM_TRAY_ICON_UNITY
-    if(m_app_indicator != NULL)
+    if(m_app_indicator != nullptr)
         g_object_unref(G_OBJECT(m_app_indicator));
 #endif
 
 #ifdef ETERA_CUSTOM_TRAY_ICON_GTK
-    if(m_gtk_icon != NULL)
+    if(m_gtk_icon != nullptr)
         g_object_unref(m_gtk_icon);
 #endif
 }
@@ -115,12 +115,12 @@ void WidgetTrayIcon::setContextMenu(QMenu* menu) {
     if(m_type == Gtk || m_type == Unity) {
         m_gtk_action_menu_item_list.clear();
 
-        if(m_gtk_menu != NULL)
+        if(m_gtk_menu != nullptr)
             gtk_widget_destroy(m_gtk_menu);
 
         m_gtk_menu = gtk_menu_new();
 
-        if(m_gtk_menu != NULL) {
+        if(m_gtk_menu != nullptr) {
             QList<QAction*> actions = menu->actions();
             for(auto* action_: actions) {
                 QAction* action = action_;
@@ -133,16 +133,16 @@ void WidgetTrayIcon::setContextMenu(QMenu* menu) {
                 else {
                     item = gtk_image_menu_item_new_with_label(action->text().toUtf8().constData());
 
-                    if(item != NULL) {
+                    if(item != nullptr) {
                         GdkPixbuf* pixbuf = gdk_pixbuf_new_from_qicon(action->icon());
-                        if(pixbuf != NULL) {
+                        if(pixbuf != nullptr) {
                             gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(item), gtk_image_new_from_pixbuf(pixbuf));
                             g_object_unref(pixbuf);
                         }
                     }
                 }
 
-                if(item != NULL) {
+                if(item != nullptr) {
                     if(action->isSeparator() == false) {
                         EteraGtkActionMenuItem action_menu_item;
                         action_menu_item.Action = action;
@@ -179,7 +179,7 @@ void WidgetTrayIcon::setIcon(const QIcon& icon) {
 #ifdef ETERA_CUSTOM_TRAY_ICON_GTK
         if(m_type == Gtk) {
         GdkPixbuf* pixbuf = gdk_pixbuf_new_from_qicon(icon);
-        if(pixbuf != NULL) {
+        if(pixbuf != nullptr) {
             gtk_status_icon_set_from_pixbuf(m_gtk_icon, pixbuf);
             g_object_unref(pixbuf);
         }
@@ -238,7 +238,7 @@ GdkPixbuf* WidgetTrayIcon::gdk_pixbuf_new_from_qicon(const QIcon& icon) {
         qSwap(buf[i], buf[i + 2]);
 #endif
 
-    return gdk_pixbuf_new_from_data(buf, GDK_COLORSPACE_RGB, (image.hasAlphaChannel() == true ? TRUE : FALSE), 8, image.width(), image.height(), image.bytesPerLine(), gdk_pixbuf_destroy_notify, NULL);
+    return gdk_pixbuf_new_from_data(buf, GDK_COLORSPACE_RGB, (image.hasAlphaChannel() == true ? TRUE : FALSE), 8, image.width(), image.height(), image.bytesPerLine(), gdk_pixbuf_destroy_notify, nullptr);
 }
 //----------------------------------------------------------------------------------------------
 
@@ -263,8 +263,8 @@ void WidgetTrayIcon::gtk_icon_button_release_event(GtkStatusIcon* /*status_icon*
 #ifdef ETERA_CUSTOM_TRAY_ICON_GTK
 void WidgetTrayIcon::gtk_icon_popup_menu(GtkStatusIcon* /*status_icon*/, guint button, guint activate_time, gpointer user_data) {
     WidgetTrayIcon* self = static_cast<WidgetTrayIcon*>(user_data);
-    if(self->m_gtk_menu != NULL)
-        gtk_menu_popup(GTK_MENU(self->m_gtk_menu), NULL, NULL, NULL, NULL, button, activate_time);
+    if(self->m_gtk_menu != nullptr)
+        gtk_menu_popup(GTK_MENU(self->m_gtk_menu), nullptr, nullptr, nullptr, nullptr, button, activate_time);
 }
 #endif
 //----------------------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 //----------------------------------------------------------------------------------------------
 #include "settings.h"
 //----------------------------------------------------------------------------------------------
-static EteraIconProvider* g_icon_provider = NULL;
+static EteraIconProvider* g_icon_provider = nullptr;
 //----------------------------------------------------------------------------------------------
 
 void EteraIconProvider::init() {
@@ -64,32 +64,32 @@ EteraIconProvider::EteraIconProvider()
     const EteraMediaIconMap media_icon_map[] = {
         {      eimtAudio,          "audio-x-generic",          ":/icons/tango/audio-x-generic.svg"},
         {     eimtBackup,        "package-x-generic",        ":/icons/tango/package-x-generic.svg"},
-        {       eimtBook,                       NULL,                                         NULL},
+        {       eimtBook,                       nullptr,                                         nullptr},
         { eimtCompressed,        "package-x-generic",        ":/icons/tango/package-x-generic.svg"},
-        {       eimtData,                       NULL,                                         NULL},
+        {       eimtData,                       nullptr,                                         nullptr},
         {eimtDevelopment,            "text-x-script",            ":/icons/tango/text-x-script.svg"},
         {  eimtDiskimage,        "package-x-generic",        ":/icons/tango/package-x-generic.svg"},
         {   eimtDocument,        "x-office-document",        ":/icons/tango/x-office-document.svg"},
-        {    eimtEncoded,                       NULL,                                         NULL},
+        {    eimtEncoded,                       nullptr,                                         nullptr},
         { eimtExecutable, "application-x-executable", ":/icons/tango/application-x-executable.svg"},
         {      eimtFlash,          "video-x-generic",          ":/icons/tango/video-x-generic.svg"},
         {       eimtFont,           "font-x-generic",           ":/icons/tango/font-x-generic.svg"},
         {      eimtImage,          "image-x-generic",          ":/icons/tango/image-x-generic.svg"},
-        {   eimtSettings,                       NULL,                                         NULL},
+        {   eimtSettings,                       nullptr,                                         nullptr},
         {eimtSpreadsheet,     "x-office-spreadsheet",     ":/icons/tango/x-office-spreadsheet.svg"},
         {       eimtText,           "text-x-generic",           ":/icons/tango/text-x-generic.svg"},
         {      eimtVideo,          "video-x-generic",          ":/icons/tango/video-x-generic.svg"},
         {        eimtWeb,                "text-html",                ":/icons/tango/text-html.svg"},
-        {    eimtUnknown,                       NULL,                                         NULL}
+        {    eimtUnknown,                       nullptr,                                         nullptr}
     };
 
     const EteraMediaIconMap* map = media_icon_map;
 
     while(map->Type != eimtUnknown) {
-        if(map->ThemeIcon != NULL || map->ResourceIcon != NULL) {
+        if(map->ThemeIcon != nullptr || map->ResourceIcon != nullptr) {
             QIcon icon_base;
 
-            if(map->ThemeIcon != NULL)
+            if(map->ThemeIcon != nullptr)
                 icon_base = QIcon::fromTheme(map->ThemeIcon, QIcon(map->ResourceIcon));
             else
                 icon_base = QIcon(map->ResourceIcon);
@@ -359,17 +359,17 @@ bool EteraIconProvider::preview(WidgetDiskItem* item) {
     QString preview = eitem->preview();
 
     if(eitem->isPublic() == true) {
-        EteraPreviewCacheItem* citem = m_preview_cache_link.value(preview, NULL);
+        EteraPreviewCacheItem* citem = m_preview_cache_link.value(preview, nullptr);
 
-        if(citem != NULL) {
+        if(citem != nullptr) {
             citem->ATime = now;
             item->setIcon(citem->Icon);
             return true;
         }
 
-        citem = m_preview_cache.value(preview, NULL);
+        citem = m_preview_cache.value(preview, nullptr);
 
-        if(citem != NULL) {
+        if(citem != nullptr) {
             citem->ATime = now;
 
             EteraPreviewCacheItem* litem = new EteraPreviewCacheItem();
@@ -386,9 +386,9 @@ bool EteraIconProvider::preview(WidgetDiskItem* item) {
             return true;
         }
     } else {
-        EteraPreviewCacheItem* citem = m_preview_cache.value(preview, NULL);
+        EteraPreviewCacheItem* citem = m_preview_cache.value(preview, nullptr);
 
-        if(citem != NULL) {
+        if(citem != nullptr) {
             citem->ATime = now;
             item->setIcon(citem->Icon);
             return true;
@@ -471,8 +471,8 @@ void EteraIconProvider::task_on_get_preview_success(EteraAPI* api) {
     m_preview_cache[url] = citem;
     m_preview_cache_size += citem->Size;
 
-    WidgetDiskItem* item = m_preview_wait.value(url, NULL);
-    if(item != NULL) {
+    WidgetDiskItem* item = m_preview_wait.value(url, nullptr);
+    if(item != nullptr) {
         m_preview_wait.remove(url);
 
         if(item->item()->isPublic() == false)
@@ -570,15 +570,15 @@ void EteraIconProvider::gcPreviewCache() {
     while(m_preview_cache_size + m_preview_cache_link_size > threshold) {
         QString url = j.value();
 
-        EteraPreviewCacheItem* item = m_preview_cache.value(url, NULL);
-        if(item != NULL) {
+        EteraPreviewCacheItem* item = m_preview_cache.value(url, nullptr);
+        if(item != nullptr) {
             m_preview_cache_size -= item->Size;
             delete item;
             m_preview_cache.remove(url);
         }
 
-        item = m_preview_cache_link.value(url, NULL);
-        if(item != NULL) {
+        item = m_preview_cache_link.value(url, nullptr);
+        if(item != nullptr) {
             m_preview_cache_link_size -= item->Size;
             delete item;
             m_preview_cache_link.remove(url);

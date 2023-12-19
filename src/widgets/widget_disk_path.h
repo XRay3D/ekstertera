@@ -20,7 +20,7 @@ public:
      * \param parent Родительский виджет
      */
     WidgetDiskPath(QWidget* parent);
-    ~WidgetDiskPath();
+    ~WidgetDiskPath() = default;
 
     /*!
      * \brief Сменить отображаемый путь
@@ -33,7 +33,7 @@ private:
      * \brief Список кнопок
      */
     QList<QToolButton*> m_buttons;
-    QHBoxLayout* m_layout;
+    QHBoxLayout* const m_layout{new QHBoxLayout{this}};
 
 public slots:
 

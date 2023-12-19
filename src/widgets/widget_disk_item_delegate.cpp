@@ -27,7 +27,7 @@ void WidgetDiskItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem
 
     bool selected = opt.state & QStyle::State_Selected;
 
-    QStyle* style = (opt.widget != NULL ? opt.widget->style() : QApplication::style());
+    QStyle* style = (opt.widget != nullptr ? opt.widget->style() : QApplication::style());
     QString text = index.data(Qt::DisplayRole).toString();
     QIcon icon = qvariant_cast<QIcon>(index.data(Qt::DecorationRole));
     QPixmap pixmap = icon.pixmap(opt.decorationSize, (selected == true ? QIcon::Selected : QIcon::Normal));

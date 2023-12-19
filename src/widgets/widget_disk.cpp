@@ -198,7 +198,7 @@ EteraAPI* WidgetDisk::createAPI(quint64 id) {
 //----------------------------------------------------------------------------------------------
 
 void WidgetDisk::releaseAPI(EteraAPI* api) {
-    if(api != NULL) {
+    if(api != nullptr) {
         m_tasks->removeTask(api->id());
         api->deleteLater();
     }
@@ -234,7 +234,7 @@ WidgetDiskItem* WidgetDisk::findByPath(const QString& path) {
             return witem;
     }
 
-    return NULL;
+    return nullptr;
 }
 //----------------------------------------------------------------------------------------------
 
@@ -521,7 +521,7 @@ void WidgetDisk::custom_context_menu_requested(const QPoint& pos) {
 
 void WidgetDisk::menu_open_triggered() {
     WidgetDiskItem* witem = static_cast<WidgetDiskItem*>(m_explorer->currentItem());
-    if(witem == NULL)
+    if(witem == nullptr)
         return;
 
     const EteraItem* eitem = witem->item();
@@ -906,7 +906,7 @@ void WidgetDisk::menu_rename_triggered() {
 
 void WidgetDisk::item_end_edit(QWidget* editor, QAbstractItemDelegate::EndEditHint /*hint*/) {
     WidgetDiskItem* witem = static_cast<WidgetDiskItem*>(m_explorer->currentItem());
-    if(witem == NULL)
+    if(witem == nullptr)
         return;
 
     witem->setFlags(witem->flags() ^ Qt::ItemIsEditable);
@@ -960,7 +960,7 @@ void WidgetDisk::item_end_edit(QWidget* editor, QAbstractItemDelegate::EndEditHi
 void WidgetDisk::task_on_rename_error(EteraAPI* api) {
     // откат переименования
     WidgetDiskItem* witem = findByPath(api->source());
-    if(witem != NULL)
+    if(witem != nullptr)
         witem->revertText();
 
     if(api->lastErrorCode() == 409)
@@ -992,7 +992,7 @@ void WidgetDisk::task_on_rename_stat_error(EteraAPI* api) {
 
 void WidgetDisk::task_on_rename_stat_success(EteraAPI* api, const EteraItem& item) {
     WidgetDiskItem* witem = findByPath(api->source());
-    if(witem != NULL)
+    if(witem != nullptr)
         witem->replaceItem(item, m_preview_mode);
 
     releaseAPI(api);
@@ -1082,7 +1082,7 @@ void WidgetDisk::task_on_publish_error(EteraAPI* api) {
 void WidgetDisk::task_on_publish_success(EteraAPI* api) {
     WidgetDiskItem* witem = findByPath(api->path());
 
-    if(witem == NULL)
+    if(witem == nullptr)
         releaseAPI(api);
     else {
         ETERA_API_TASK_STAT(api, task_on_publish_stat_success, task_on_publish_stat_error);
@@ -1127,7 +1127,7 @@ void WidgetDisk::task_on_unpublish_error(EteraAPI* api) {
 void WidgetDisk::task_on_unpublish_success(EteraAPI* api) {
     WidgetDiskItem* witem = findByPath(api->path());
 
-    if(witem == NULL)
+    if(witem == nullptr)
         releaseAPI(api);
     else {
         ETERA_API_TASK_STAT(api, task_on_unpublish_stat_success, task_on_unpublish_stat_error);
@@ -1172,7 +1172,7 @@ void WidgetDisk::task_on_publish_stat_error(EteraAPI* api) {
 void WidgetDisk::task_on_publish_stat_success(EteraAPI* api, const EteraItem& item) {
     WidgetDiskItem* witem = findByPath(item.path());
 
-    if(witem != NULL)
+    if(witem != nullptr)
         witem->replaceItem(item, m_preview_mode);
 
     releaseAPI(api);
@@ -1212,7 +1212,7 @@ void WidgetDisk::task_on_unpublish_stat_error(EteraAPI* api) {
 void WidgetDisk::task_on_unpublish_stat_success(EteraAPI* api, const EteraItem& item) {
     WidgetDiskItem* witem = findByPath(item.path());
 
-    if(witem != NULL)
+    if(witem != nullptr)
         witem->replaceItem(item, m_preview_mode);
 
     releaseAPI(api);
@@ -1221,7 +1221,7 @@ void WidgetDisk::task_on_unpublish_stat_success(EteraAPI* api, const EteraItem& 
 
 void WidgetDisk::menu_info_triggered() {
     WidgetDiskItem* witem = static_cast<WidgetDiskItem*>(m_explorer->currentItem());
-    if(witem == NULL)
+    if(witem == nullptr)
         return;
 
     const EteraItem* eitem = witem->item();
@@ -1495,7 +1495,7 @@ void WidgetDisk::task_on_put_stat_success(EteraAPI* api, const EteraItem& item) 
     if(item.parentPath() == m_path) {
         WidgetDiskItem* witem = findByPath(item.path());
 
-        if(witem == NULL)
+        if(witem == nullptr)
             m_explorer->setCurrentItem(new WidgetDiskItem(m_explorer, item, m_preview_mode), QItemSelectionModel::ClearAndSelect);
         else
             witem->replaceItem(item, m_preview_mode);
@@ -1724,7 +1724,7 @@ void WidgetDisk::addPutActivity(EteraPutActivityType type, quint64 parent, const
 void WidgetDisk::spawnPutActivity(EteraPutActivityType type, EteraAPI* api) {
     Q_UNUSED(type);
 
-    if(api != NULL) {
+    if(api != nullptr) {
         m_put_active_api_mkdir.remove(api->id());
         m_put_active_api_put.remove(api->id());
         releaseAPI(api);
@@ -1780,16 +1780,16 @@ void WidgetDisk::abortPutActivity(quint64 id, bool full) {
     removePutActivity(m_put_queue_put, aborted);
 
     for(quint64 id: aborted) {
-        EteraAPI* api = m_put_active_api_mkdir.value(id, NULL);
-        if(api != NULL) {
+        EteraAPI* api = m_put_active_api_mkdir.value(id, nullptr);
+        if(api != nullptr) {
             removeDelayed(api);
             m_put_active_api_mkdir.remove(api->id());
             api->abort();
             releaseAPI(api);
         }
 
-        api = m_put_active_api_put.value(id, NULL);
-        if(api != NULL) {
+        api = m_put_active_api_put.value(id, nullptr);
+        if(api != nullptr) {
             removeDelayed(api);
             m_put_active_api_put.remove(api->id());
             api->abort();
@@ -2100,7 +2100,7 @@ void WidgetDisk::addGetActivity(EteraGetActivityType type, quint64 parent, const
 void WidgetDisk::spawnGetActivity(EteraGetActivityType type, EteraAPI* api) {
     Q_UNUSED(type);
 
-    if(api != NULL) {
+    if(api != nullptr) {
         m_get_active_api_ls.remove(api->id());
         m_get_active_api_get.remove(api->id());
         releaseAPI(api);
@@ -2154,16 +2154,16 @@ void WidgetDisk::abortGetActivity(quint64 id, bool full) {
     removeGetActivity(m_get_queue_get, aborted);
 
     for(quint64 id: aborted) {
-        EteraAPI* api = m_get_active_api_ls.value(id, NULL);
-        if(api != NULL) {
+        EteraAPI* api = m_get_active_api_ls.value(id, nullptr);
+        if(api != nullptr) {
             removeDelayed(api);
             m_get_active_api_ls.remove(api->id());
             api->abort();
             releaseAPI(api);
         }
 
-        api = m_get_active_api_get.value(id, NULL);
-        if(api != NULL) {
+        api = m_get_active_api_get.value(id, nullptr);
+        if(api != nullptr) {
             removeDelayed(api);
             m_get_active_api_get.remove(api->id());
             api->abort();

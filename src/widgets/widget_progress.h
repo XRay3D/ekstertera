@@ -19,7 +19,7 @@ public:
      * \brief Конструктор
      * \param parent Родительский виджет
      */
-    WidgetProgressbar(QWidget* parent = NULL);
+    WidgetProgressbar(QWidget* parent = nullptr);
     ~WidgetProgressbar();
 
     //

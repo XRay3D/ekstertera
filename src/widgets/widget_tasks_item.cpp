@@ -4,14 +4,14 @@
 WidgetTasksItem::WidgetTasksItem(quint64 id, QTreeWidget* parent)
     : QTreeWidgetItem(parent) {
     m_id = id;
-    m_bar = NULL;
+    m_bar = nullptr;
 }
 //----------------------------------------------------------------------------------------------
 
 WidgetTasksItem::WidgetTasksItem(quint64 id, WidgetTasksItem* parent)
     : QTreeWidgetItem(parent) {
     m_id = id;
-    m_bar = NULL;
+    m_bar = nullptr;
 }
 //----------------------------------------------------------------------------------------------
 

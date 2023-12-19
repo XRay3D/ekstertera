@@ -205,7 +205,7 @@ void EteraAPI::init() {
         "ECDHE-ECDSA-AES256-SHA", // SSLv3 Kx=ECDH Au=ECDSA Enc=AES(256) Mac=SHA1
         "AES128-SHA",             // SSLv3 Kx=RSA  Au=RSA   Enc=AES(128) Mac=SHA1
         "AES256-SHA",             // SSLv3 Kx=RSA  Au=RSA   Enc=AES(256) Mac=SHA1
-        NULL};
+        nullptr};
 #else
     // предпочитаемый список шифров tls1.2 (см. ниже про версии Qt и поддержку)
     static const char* ETERA_CIPHERS[] = {
@@ -227,14 +227,14 @@ void EteraAPI::init() {
         "AES256-GCM-SHA384",             // TLSv1.2 Kx=RSA  Au=RSA   Enc=AESGCM(256) Mac=AEAD
         "AES256-SHA256",                 // TLSv1.2 Kx=RSA  Au=RSA   Enc=AES(256)    Mac=SHA256
         "AES256-SHA",                    // SSLv3   Kx=RSA  Au=RSA   Enc=AES(256)    Mac=SHA1
-        NULL};
+        nullptr};
 #endif
 
     // поддерживаемый список шифров
     QList<QSslCipher> cipher_list;
 
     const char** ciphers = ETERA_CIPHERS;
-    while((*ciphers) != NULL) {
+    while((*ciphers) != nullptr) {
         QSslCipher cipher(*ciphers, QSsl::SslProtocol::TlsV1_0); // FIXME QSsl::SslV3);
         if(cipher.isNull() == false)
             cipher_list.append(cipher);
@@ -282,8 +282,8 @@ void EteraAPI::cleanup() {
 
 EteraAPI::EteraAPI(QObject* parent, quint64 id)
     : QObject(parent) {
-    m_io = NULL;
-    m_reply = NULL;
+    m_io = nullptr;
+    m_reply = nullptr;
 
     m_deleted = false;
 
@@ -297,7 +297,7 @@ EteraAPI::EteraAPI(QObject* parent, quint64 id)
     m_crop = false;
     m_permanently = false;
     m_overwrite = false;
-    m_device = NULL;
+    m_device = nullptr;
 
     m_parent_id = 0;
     m_ensure = eitUnknown;
@@ -412,7 +412,7 @@ QString EteraAPI::humanSpeed(quint64 bps) {
 //----------------------------------------------------------------------------------------------
 
 void EteraAPI::on_tick_timer() {
-    if(g_api_enabled == false || m_deleted == true || m_reply == NULL)
+    if(g_api_enabled == false || m_deleted == true || m_reply == nullptr)
         return;
 
     if(m_prev_tick == m_tick) {
@@ -467,7 +467,7 @@ bool EteraAPI::setLastError(int code, const QString& message) {
 //----------------------------------------------------------------------------------------------
 
 void EteraAPI::abort() {
-    if(m_reply != NULL && m_deleted == false)
+    if(m_reply != nullptr && m_deleted == false)
         m_reply->abort();
 }
 //----------------------------------------------------------------------------------------------
@@ -527,8 +527,8 @@ void EteraAPI::prepareRequest(QNetworkRequest& request, const QString& relurl, c
 //----------------------------------------------------------------------------------------------
 
 bool EteraAPI::startRequest(const QNetworkRequest& request, EteraRequestMethod method, const QString& data, QIODevice* io) {
-    m_io = NULL;
-    m_reply = NULL;
+    m_io = nullptr;
+    m_reply = nullptr;
 
     m_tick = 1;
     m_prev_tick = 0;
@@ -544,14 +544,14 @@ bool EteraAPI::startRequest(const QNetworkRequest& request, EteraRequestMethod m
         break;
 
     case ermPOST:
-        if(io != NULL)
+        if(io != nullptr)
             reply = m_http.post(request, io);
         else
             reply = m_http.post(request, data.toUtf8());
         break;
 
     case ermPUT:
-        if(io != NULL)
+        if(io != nullptr)
             reply = m_http.put(request, io);
         else
             reply = m_http.put(request, data.toUtf8());
@@ -570,7 +570,7 @@ bool EteraAPI::startRequest(const QNetworkRequest& request, EteraRequestMethod m
 
     QObject::connect(reply, &QNetworkReply::sslErrors, this, &EteraAPI::on_ssl_errors);
 
-    if(method == ermGET && io != NULL)
+    if(method == ermGET && io != nullptr)
         QObject::connect(reply, &QNetworkReply::readyRead, this, &EteraAPI::on_ready_read);
 
     return true;
@@ -591,7 +591,7 @@ bool EteraAPI::parseReply(int& code, QString& body) {
 
         m_reply->close();
         m_reply->deleteLater();
-        m_reply = NULL;
+        m_reply = nullptr;
 
         // коды NetworkError пересекаются с HTTP-кодами
         if(error >= 100 && error < 600)
@@ -609,7 +609,7 @@ bool EteraAPI::parseReply(int& code, QString& body) {
 
     m_reply->close();
     m_reply->deleteLater();
-    m_reply = NULL;
+    m_reply = nullptr;
 
     return true;
 }
@@ -1224,7 +1224,7 @@ void EteraAPI::get(const QString& source, const QString& target) {
 
     m_source = source;
     m_target = target;
-    m_device = NULL;
+    m_device = nullptr;
 
     if(startSimpleRequest("/resources/download", args, ermGET) == true)
         connectReplyFinished(&EteraAPI::on_get_file_finished);
@@ -1269,7 +1269,7 @@ void EteraAPI::get(const QString& url, QIODevice* device) {
     QNetworkRequest request(QUrl::fromEncoded(url.toUtf8()));
     setDefaultHeaders(request, 0, true, true);
 
-    if(device == NULL) {
+    if(device == nullptr) {
         device = new QBuffer{this};
         if(device->open(QIODevice::WriteOnly | QIODevice::Truncate) == false) {
             setLastError(static_cast<QFile*>(m_device)->error(), FILE_OPEN_ERROR);

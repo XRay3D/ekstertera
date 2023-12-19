@@ -13,7 +13,7 @@
  */
 class WidgetDiskItemDelegate : public QStyledItemDelegate {
 public:
-    WidgetDiskItemDelegate(QObject* parent = NULL);
+    WidgetDiskItemDelegate(QObject* parent = nullptr);
     ~WidgetDiskItemDelegate();
 
     // QStyledItemDelegate

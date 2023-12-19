@@ -294,7 +294,7 @@ public:
      * \param parent Родитель
      * \param id ID задачи (для 0 будет назначено новое значение)
      */
-    EteraAPI(QObject* parent = NULL, quint64 id = 0);
+    EteraAPI(QObject* parent = nullptr, quint64 id = 0);
     ~EteraAPI();
 
     /*!
@@ -479,9 +479,9 @@ public:
      * Сигнал onGET
      * \param url Ссылка
      * \param device Устройство записи
-     * При device == NULL будет создан QBuffer
+     * При device == nullptr будет создан QBuffer
      */
-    void get(const QString& url, QIODevice* device = NULL);
+    void get(const QString& url, QIODevice* device = nullptr);
 
     /*!
      * \brief Открыть доступ к объекту
@@ -701,7 +701,7 @@ private:
      * \param io Тело для POST/PUT запроса (исключает data)
      * \return false при возникновении ошибки, иначе true
      */
-    bool startRequest(const QNetworkRequest& request, EteraRequestMethod method = ermGET, const QString& data = "", QIODevice* io = NULL);
+    bool startRequest(const QNetworkRequest& request, EteraRequestMethod method = ermGET, const QString& data = "", QIODevice* io = nullptr);
 
     /*!
      * \brief Разбор результата выполнения запроса

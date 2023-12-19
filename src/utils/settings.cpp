@@ -1,6 +1,6 @@
 #include "settings.h"
 //----------------------------------------------------------------------------------------------
-static EteraSettings* g_settings = NULL;
+static EteraSettings* g_settings = nullptr;
 //----------------------------------------------------------------------------------------------
 
 void EteraSettings::init() {

@@ -46,8 +46,6 @@ void WidgetDiskPath::changePath(const QString& path) {
 //----------------------------------------------------------------------------------------------
 
 void WidgetDiskPath::button_clicked() {
-    QToolButton* button = static_cast<QToolButton*>(sender());
-    QString path = button->property("path").toString();
-    emit onPathChangeRequest(path);
+    emit onPathChangeRequest(sender()->property("path").toString());
 }
 //----------------------------------------------------------------------------------------------

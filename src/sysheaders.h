@@ -74,6 +74,9 @@
 // Qt 5.x specific
 #include <QMimeDatabase>
 #include <QMimeType>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #endif
 
 //
@@ -115,7 +118,7 @@
 //
 
 // https://github.com/gaudecker/qt-json
-#include "3dparty/json/json.h"
+// #include "3dparty/json/json.h"
 
 // бэкпорты из Qt 5.x
 #if QT_VERSION < 0x050000

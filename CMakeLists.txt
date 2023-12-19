@@ -8,7 +8,7 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
@@ -26,7 +26,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 #mainwindow.ui
 #)
 
-set(DIRS "src" "3dparty/json")
+set(DIRS "src")#"3dparty/json")
 foreach(X IN LISTS DIRS)
     file(GLOB_RECURSE PROJECT_SOURCES
         ${X}/*.h
@@ -37,6 +37,8 @@ foreach(X IN LISTS DIRS)
 endforeach()
 
 include_directories(src)
+
+
 
 ##################################################
 # # Change 'myapp_en' to be the base file name of the qrc file.
@@ -87,6 +89,8 @@ else()
         ${PROJECT_SOURCES}
     )
 endif()
+
+target_precompile_headers(${PROJECT_NAME} PRIVATE src/sysheaders.h)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets

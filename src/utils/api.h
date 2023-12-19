@@ -120,7 +120,7 @@ public:
      * \param json Данные вызова в формате json
      * \return Флаг успешного парсинга
      */
-    bool parse(const QtJson::JsonObject& json);
+    bool parse(const QJsonObject& json);
 
     /*!
      * \brief Объект является директорией?

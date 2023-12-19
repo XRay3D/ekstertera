@@ -26,20 +26,21 @@ EteraInfo::EteraInfo() {
 //----------------------------------------------------------------------------------------------
 
 bool EteraInfo::parse(const QString& body) {
+    QJsonParseError error;
+    QJsonObject json = QJsonDocument::fromJson(body.toUtf8(), &error).object();
+    if(error.error)
+        return false;
+
     bool ok;
-    QtJson::JsonObject json = QtJson::parse(body, ok).toMap();
+    m_used = json["used_space"].toVariant().toULongLong(&ok);
     if(ok == false)
         return false;
 
-    m_used = json["used_space"].toULongLong(&ok);
+    m_total = json["total_space"].toVariant().toULongLong(&ok);
     if(ok == false)
         return false;
 
-    m_total = json["total_space"].toULongLong(&ok);
-    if(ok == false)
-        return false;
-
-    m_trash = json["trash_size"].toULongLong(&ok);
+    m_trash = json["trash_size"].toVariant().toULongLong(&ok);
     if(ok == false)
         return false;
 
@@ -48,7 +49,7 @@ bool EteraInfo::parse(const QString& body) {
     else
         m_free = m_total - m_used;
 
-    QtJson::JsonObject system_folders = json["system_folders"].toMap();
+    QJsonObject system_folders = json["system_folders"].toObject();
 
     m_applications = system_folders["applications"].toString();
     m_downloads = system_folders["downloads"].toString();
@@ -65,16 +66,16 @@ EteraItem::EteraItem() {
 //----------------------------------------------------------------------------------------------
 
 bool EteraItem::parse(const QString& body) {
-    bool ok;
-    QtJson::JsonObject json = QtJson::parse(body, ok).toMap();
-    if(ok == false)
+    QJsonParseError error;
+    QJsonObject json = QJsonDocument::fromJson(body.toUtf8(), &error).object();
+    if(error.error)
         return false;
 
     return parse(json);
 }
 //----------------------------------------------------------------------------------------------
 
-bool EteraItem::parse(const QtJson::JsonObject& json) {
+bool EteraItem::parse(const QJsonObject& json) {
     bool ok;
 
     m_name = json["name"].toString();
@@ -83,14 +84,14 @@ bool EteraItem::parse(const QtJson::JsonObject& json) {
     m_public_key = json["public_key"].toString();
     m_public_url = json["public_url"].toString();
 
-    m_created = json["created"].toDateTime();
+    m_created = json["created"].toVariant().toDateTime();
     if(m_created.isValid() == false)
         return false;
 
     // тайм-зона не парсится, предполагаем UTC
     m_created.setTimeSpec(Qt::UTC);
 
-    m_modified = json["modified"].toDateTime();
+    m_modified = json["modified"].toVariant().toDateTime();
     if(m_modified.isValid() == false)
         return false;
 
@@ -113,7 +114,7 @@ bool EteraItem::parse(const QtJson::JsonObject& json) {
     m_mime_type = json["mime_type"].toString();
     m_preview = json["preview"].toString();
 
-    m_size = json["size"].toULongLong(&ok);
+    m_size = json["size"].toVariant().toULongLong(&ok);
     if(ok == false)
         return false;
 
@@ -666,10 +667,10 @@ void EteraAPI::on_token_finished() {
         return;
     }
 
-    bool ok;
-    QtJson::JsonObject json = QtJson::parse(body, ok).toMap();
-    if(ok == false) {
-        setLastError(1, JSON_PARSE_ERROR);
+    QJsonParseError error;
+    QJsonObject json = QJsonDocument::fromJson(body.toUtf8(), &error).object();
+    if(error.error) {
+        setLastError(error.error, error.errorString());
         return;
     }
 
@@ -704,10 +705,10 @@ bool EteraAPI::checkYandexDomain(const QString& _url) {
 //----------------------------------------------------------------------------------------------
 
 bool EteraAPI::parseLink(const QString& link, QString& url, EteraRequestMethod& method) {
-    bool ok;
-    QtJson::JsonObject json = QtJson::parse(link, ok).toMap();
-    if(ok == false)
-        return setLastError(1, JSON_PARSE_ERROR);
+    QJsonParseError error;
+    QJsonObject json = QJsonDocument::fromJson(link.toUtf8(), &error).object();
+    if(error.error)
+        return setLastError(error.error, error.errorString());
 
     url = json["href"].toString();
 
@@ -765,9 +766,10 @@ bool EteraAPI::parseWait(bool& wait) {
     if(code != 200)
         return setLastError(code, body);
 
-    QtJson::JsonObject json = QtJson::parse(body, ok).toMap();
-    if(ok == false)
-        return setLastError(1, JSON_PARSE_ERROR);
+    QJsonParseError error;
+    QJsonObject json = QJsonDocument::fromJson(body.toUtf8(), &error).object();
+    if(error.error)
+        return setLastError(error.error, error.errorString());
 
     QString status = json["status"].toString().toLower();
     if(status == "in-progress") {
@@ -898,10 +900,10 @@ void EteraAPI::on_ls_finished() {
         return;
     }
 
-    bool ok;
-    QtJson::JsonObject json = QtJson::parse(body, ok).toMap();
-    if(ok == false) {
-        setLastError(1, JSON_PARSE_ERROR);
+    QJsonParseError error;
+    QJsonObject json = QJsonDocument::fromJson(body.toUtf8(), &error).object();
+    if(error.error) {
+        setLastError(error.error, error.errorString());
         return;
     }
 
@@ -923,12 +925,12 @@ void EteraAPI::on_ls_finished() {
         return;
     }
 
-    json = json["_embedded"].toMap();
-    QVariantList items = json["items"].toList();
+    json = json["_embedded"].toObject();
+    QJsonArray items = json["items"].toArray();
 
-    for(QVariantList::const_iterator i = items.constBegin(); i < items.constEnd(); ++i) {
+    for(auto&& var: items) {
         EteraItem item;
-        if(item.parse((*i).toMap()) == false) {
+        if(item.parse(var.toObject()) == false) {
             setLastError(1, JSON_PARSE_ERROR);
             return;
         }
@@ -936,7 +938,8 @@ void EteraAPI::on_ls_finished() {
         list.append(item);
     }
 
-    quint64 limit = json["limit"].toULongLong(&ok);
+    bool ok;
+    quint64 limit = json["limit"].toVariant().toULongLong(&ok);
     if(ok == false) {
         setLastError(1, JSON_PARSE_ERROR);
         return;

@@ -3,14 +3,14 @@
 #include "utils/settings.h"
 //----------------------------------------------------------------------------------------------
 
-FormMainUI::FormMainUI() : QMainWindow()
-{
+FormMainUI::FormMainUI()
+    : QMainWindow() {
     QIcon icon;
-    icon.addFile(":/icons/ekstertera16.png",  QSize(16, 16));
-    icon.addFile(":/icons/ekstertera24.png",  QSize(24, 24));
-    icon.addFile(":/icons/ekstertera32.png",  QSize(32, 32));
-    icon.addFile(":/icons/ekstertera48.png",  QSize(48, 48));
-    icon.addFile(":/icons/ekstertera64.png",  QSize(64, 64));
+    icon.addFile(":/icons/ekstertera16.png", QSize(16, 16));
+    icon.addFile(":/icons/ekstertera24.png", QSize(24, 24));
+    icon.addFile(":/icons/ekstertera32.png", QSize(32, 32));
+    icon.addFile(":/icons/ekstertera48.png", QSize(48, 48));
+    icon.addFile(":/icons/ekstertera64.png", QSize(64, 64));
     icon.addFile(":/icons/ekstertera128.png", QSize(128, 128));
     icon.addFile(":/icons/ekstertera256.png", QSize(256, 256));
     setWindowIcon(icon);
@@ -73,7 +73,7 @@ FormMainUI::FormMainUI() : QMainWindow()
 
     m_menu_view->addSeparator();
 
-    m_menu_view_zoom_in  = m_menu_view->addAction(QIcon::fromTheme("zoom-in", QIcon(":/icons/gnome/zoom-in32.png")), "");
+    m_menu_view_zoom_in = m_menu_view->addAction(QIcon::fromTheme("zoom-in", QIcon(":/icons/gnome/zoom-in32.png")), "");
     m_menu_view_zoom_in->setShortcut(QKeySequence(QKeySequence::ZoomIn));
 
     m_menu_view_zoom_out = m_menu_view->addAction(QIcon::fromTheme("zoom-out", QIcon(":/icons/gnome/zoom-out32.png")), "");
@@ -148,10 +148,9 @@ FormMainUI::FormMainUI() : QMainWindow()
 }
 //----------------------------------------------------------------------------------------------
 
-void FormMainUI::closeEvent(QCloseEvent* event)
-{
+void FormMainUI::closeEvent(QCloseEvent* event) {
     // сохранение layout
-    if (m_tray_icon->isVisible() == true && EteraSettings::instance()->closeToTray() == true) {
+    if(m_tray_icon->isVisible() == true && EteraSettings::instance()->closeToTray() == true) {
         hide();
         event->ignore();
     } else {
@@ -161,48 +160,46 @@ void FormMainUI::closeEvent(QCloseEvent* event)
 }
 //----------------------------------------------------------------------------------------------
 
-void FormMainUI::changeEvent(QEvent* event)
-{
-    if (event->type() == QEvent::LanguageChange)
+void FormMainUI::changeEvent(QEvent* event) {
+    if(event->type() == QEvent::LanguageChange)
         retranslateUi();
     else
         QWidget::changeEvent(event);
 }
 //----------------------------------------------------------------------------------------------
 
-void FormMainUI::retranslateUi()
-{
-    setWindowTitle(trUtf8("Ekstertera"));
+void FormMainUI::retranslateUi() {
+    setWindowTitle(tr("Ekstertera"));
 
-    m_menu_file->setTitle(trUtf8("&Файл"));
+    m_menu_file->setTitle(tr("&Файл"));
 
-    m_menu_file_exit->setText(trUtf8("Выход"));
+    m_menu_file_exit->setText(tr("Выход"));
 
-    m_menu_edit->setTitle(trUtf8("&Правка"));
+    m_menu_edit->setTitle(tr("&Правка"));
 
-    m_menu_edit_settings->setText(trUtf8("Параметры"));
+    m_menu_edit_settings->setText(tr("Параметры"));
 
-    m_menu_view->setTitle(trUtf8("&Вид"));
+    m_menu_view->setTitle(tr("&Вид"));
 
-    m_menu_view_refresh->setText(trUtf8("Обновить"));
-    m_menu_view_zoom_in->setText(trUtf8("Увеличить"));
-    m_menu_view_zoom_out->setText(trUtf8("Уменьшить"));
-    m_menu_view_preview->setText(trUtf8("Предпросмотр"));
+    m_menu_view_refresh->setText(tr("Обновить"));
+    m_menu_view_zoom_in->setText(tr("Увеличить"));
+    m_menu_view_zoom_out->setText(tr("Уменьшить"));
+    m_menu_view_preview->setText(tr("Предпросмотр"));
 
-    m_menu_help->setTitle(trUtf8("&?"));
+    m_menu_help->setTitle(tr("&?"));
 
-    m_menu_about->setText(trUtf8("О программе"));
-    m_menu_about_qt->setText(trUtf8("О Qt"));
+    m_menu_about->setText(tr("О программе"));
+    m_menu_about_qt->setText(tr("О Qt"));
 
-    m_toolbar->setWindowTitle(trUtf8("Панель инструментов"));
+    m_toolbar->setWindowTitle(tr("Панель инструментов"));
 
-    m_action_upload->setText(trUtf8("Загрузить на Яндекс.Диск"));
-    m_action_download->setText(trUtf8("Загрузить с Яндекс.Диска"));
+    m_action_upload->setText(tr("Загрузить на Яндекс.Диск"));
+    m_action_download->setText(tr("Загрузить с Яндекс.Диска"));
 
-    m_label_used->setToolTip(trUtf8("Используется"));
-    m_label_total->setToolTip(trUtf8("Всего"));
+    m_label_used->setToolTip(tr("Используется"));
+    m_label_total->setToolTip(tr("Всего"));
 
-    m_tray_menu_show->setText(trUtf8("Показать"));
+    m_tray_menu_show->setText(tr("Показать"));
 
 #ifdef ETERA_CUSTOM_TRAY_ICON
     m_tray_icon->retranslateUi();
@@ -210,25 +207,23 @@ void FormMainUI::retranslateUi()
 }
 //----------------------------------------------------------------------------------------------
 
-void FormMainUI::save()
-{
+void FormMainUI::save() {
     QSettings settings;
     settings.setValue("layout/main", this->saveGeometry());
-    settings.setValue("app/zoom",    m_widget_disk->zoomFactor());
+    settings.setValue("app/zoom", m_widget_disk->zoomFactor());
     settings.setValue("app/preview", m_menu_view_preview->isChecked());
 }
 //----------------------------------------------------------------------------------------------
 
-void FormMainUI::restore()
-{
+void FormMainUI::restore() {
     QSettings settings;
 
     restoreGeometry(settings.value("layout/main").toByteArray());
 
     int zoom = m_widget_disk->setZoomFactor(settings.value("app/zoom", -1).toInt());
-    if (zoom < 0)
+    if(zoom < 0)
         m_menu_view_zoom_out->setEnabled(false);
-    else if (zoom > 0)
+    else if(zoom > 0)
         m_menu_view_zoom_in->setEnabled(false);
 
     m_menu_view_preview->setChecked(settings.value("app/preview", false).toBool());

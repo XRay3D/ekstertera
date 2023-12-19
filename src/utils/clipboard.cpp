@@ -3,40 +3,35 @@
 static EteraClipboard* g_clipboard = NULL;
 //----------------------------------------------------------------------------------------------
 
-void EteraClipboard::init()
-{
+void EteraClipboard::init() {
     g_clipboard = new EteraClipboard();
 }
 //----------------------------------------------------------------------------------------------
 
-void EteraClipboard::cleanup()
-{
+void EteraClipboard::cleanup() {
     delete g_clipboard;
 }
 //----------------------------------------------------------------------------------------------
 
-EteraClipboard* EteraClipboard::instance()
-{
+EteraClipboard* EteraClipboard::instance() {
     return g_clipboard;
 }
 //----------------------------------------------------------------------------------------------
 
-EteraClipboard::EteraClipboard() : EteraItemList()
-{
+EteraClipboard::EteraClipboard()
+    : EteraItemList() {
     m_copy_mode = true;
 }
 //----------------------------------------------------------------------------------------------
 
-EteraClipboard::~EteraClipboard()
-{
+EteraClipboard::~EteraClipboard() {
 }
 //----------------------------------------------------------------------------------------------
 
-void EteraClipboard::removeByPath(const QString& path)
-{
+void EteraClipboard::removeByPath(const QString& path) {
     // оптимизировать O(n) при необходимости
-    for (int i = 0; i < count(); i++)
-        if (at(i).path() == path) {
+    for(int i = 0; i < count(); i++)
+        if(at(i).path() == path) {
             removeAt(i);
             break;
         }

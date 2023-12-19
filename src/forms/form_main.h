@@ -11,85 +11,81 @@
 /*!
  * \brief Класс главной формы приложения
  */
-class FormMain : public FormMainUI
-{
+class FormMain : public FormMainUI {
     Q_OBJECT
 
-    public:
+public:
+    FormMain();
+    ~FormMain();
 
-        FormMain();
-        ~FormMain();
+protected:
+    /*!
+     * \brief Функция отработки смены состояния формы
+     */
+    void virtual changeEvent(QEvent* event);
 
-    protected:
+private:
+    /*!
+     * \brief Обновление статуса в статус-баре
+     */
+    void updateInfoStatus();
 
-        /*!
-         * \brief Функция отработки смены состояния формы
-         */
-        void virtual changeEvent(QEvent* event);
+private slots:
 
-    private:
+    //
+    // меню
+    //
 
-        /*!
-         * \brief Обновление статуса в статус-баре
-         */
-        void updateInfoStatus();
+    // Файл
+    void menu_file_exit_triggered(); /*!< \brief Файл / Выход */
 
-    private slots:
+    // Параметры
+    void menu_edit_settings_triggered(); /*!< \brief Параметры / Настройки */
 
-        //
-        // меню
-        //
+    // Вид
+    void menu_view_refresh_triggered();  /*!< \brief Обновить     */
+    void menu_view_zoom_in_triggered();  /*!< \brief Увеличить    */
+    void menu_view_zoom_out_triggered(); /*!< \brief Уменьшить    */
+    void menu_view_preview_changed();    /*!< \brief Предпросмотр */
 
-        // Файл
-        void menu_file_exit_triggered();   /*!< \brief Файл / Выход */
+    // ?
+    void menu_help_about_triggered();    /*!< \brief ? / О программе */
+    void menu_help_about_qt_triggered(); /*!< \brief ? / О Qt        */
 
-        // Параметры
-        void menu_edit_settings_triggered();   /*!< \brief Параметры / Настройки */
+    //
+    // обработчики иконки трея
+    //
 
-        // Вид
-        void menu_view_refresh_triggered();    /*!< \brief Обновить     */
-        void menu_view_zoom_in_triggered();    /*!< \brief Увеличить    */
-        void menu_view_zoom_out_triggered();   /*!< \brief Уменьшить    */
-        void menu_view_preview_changed();      /*!< \brief Предпросмотр */
+    void tray_icon_activated(QSystemTrayIcon::ActivationReason reason); /*!< \brief Скрыть / Показать */
+    void tray_menu_show_triggered();                                    /*!< \brief Показать */
 
-        // ?
-        void menu_help_about_triggered();      /*!< \brief ? / О программе */
-        void menu_help_about_qt_triggered();   /*!< \brief ? / О Qt        */
+    //
+    // тулбар
+    //
 
-        //
-        // обработчики иконки трея
-        //
+    void action_upload_triggered();   /*!< \brief Загрузить на Яндекс.Диск */
+    void action_download_triggered(); /*!< \brief Загрузить с Яндекс.Диска */
 
-        void tray_icon_activated(QSystemTrayIcon::ActivationReason reason);   /*!< \brief Скрыть / Показать */
-        void tray_menu_show_triggered();                                      /*!< \brief Показать */
+    //
+    // обработчики виджета диска
+    //
 
-        //
-        // тулбар
-        //
+    void widget_disk_on_path_changed(const QString& path);                    /*!< \brief Смена пути в виджете     */
+    void widget_disk_on_change_possible_actions(bool download);               /*!< \brief Смена возможных действий */
+    void widget_disk_on_selection_changed(int files, int dirs, quint64 size); /*!< \brief Смена выделения          */
 
-        void action_upload_triggered();     /*!< \brief Загрузить на Яндекс.Диск */
-        void action_download_triggered();   /*!< \brief Загрузить с Яндекс.Диска */
+    //
+    // обработчики виджета путей
+    //
 
-        //
-        // обработчики виджета диска
-        //
+    void widget_path_on_path_change_request(const QString& path); /*!< \brief Запрос на смену пути */
 
-        void widget_disk_on_path_changed(const QString& path);                      /*!< \brief Смена пути в виджете     */
-        void widget_disk_on_change_possible_actions(bool download);                 /*!< \brief Смена возможных действий */
-        void widget_disk_on_selection_changed(int files, int dirs, quint64 size);   /*!< \brief Смена выделения          */
+    //
+    // обработчики получения информации о диске
+    //
 
-        //
-        // обработчики виджета путей
-        //
-
-        void widget_path_on_path_change_request(const QString& path);   /*!< \brief Запрос на смену пути */
-
-        //
-        // обработчики получения информации о диске
-        //
-
-        void task_on_info_error(EteraAPI* api);                            /*!< \brief Ошибка обновления информации о диске   */
-        void task_on_info_success(EteraAPI* api, const EteraInfo& info);   /*!< \brief Успешное обновление информации о диске */
+    void task_on_info_error(EteraAPI* api);                          /*!< \brief Ошибка обновления информации о диске   */
+    void task_on_info_success(EteraAPI* api, const EteraInfo& info); /*!< \brief Успешное обновление информации о диске */
 };
 
-#endif   // _ekstertera_forms_form_main_h_
+#endif // _ekstertera_forms_form_main_h_

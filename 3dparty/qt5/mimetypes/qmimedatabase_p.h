@@ -45,45 +45,43 @@
 #include <QtCore/qhash.h>
 #include <QtCore/qmutex.h>
 
+#include "qmimeglobpattern_p.h"
 #include "qmimetype.h"
 #include "qmimetype_p.h"
-#include "qmimeglobpattern_p.h"
 
 QT_BEGIN_NAMESPACE
 
 class QMimeDatabase;
 class QMimeProviderBase;
 
-class QMimeDatabasePrivate
-{
+class QMimeDatabasePrivate {
 public:
     Q_DISABLE_COPY(QMimeDatabasePrivate)
 
     QMimeDatabasePrivate();
     ~QMimeDatabasePrivate();
 
-    static QMimeDatabasePrivate *instance();
+    static QMimeDatabasePrivate* instance();
 
-    QMimeProviderBase *provider();
-    void setProvider(QMimeProviderBase *theProvider);
+    QMimeProviderBase* provider();
+    void setProvider(QMimeProviderBase* theProvider);
 
     inline QString defaultMimeType() const { return m_defaultMimeType; }
 
-    bool inherits(const QString &mime, const QString &parent);
+    bool inherits(const QString& mime, const QString& parent);
 
     QList<QMimeType> allMimeTypes();
 
+    QMimeType mimeTypeForName(const QString& nameOrAlias);
+    QMimeType mimeTypeForFileNameAndData(const QString& fileName, QIODevice* device, int* priorityPtr);
+    QMimeType findByData(const QByteArray& data, int* priorityPtr);
+    QStringList mimeTypeForFileName(const QString& fileName, QString* foundSuffix = 0);
 
-    QMimeType mimeTypeForName(const QString &nameOrAlias);
-    QMimeType mimeTypeForFileNameAndData(const QString &fileName, QIODevice *device, int *priorityPtr);
-    QMimeType findByData(const QByteArray &data, int *priorityPtr);
-    QStringList mimeTypeForFileName(const QString &fileName, QString *foundSuffix = 0);
-
-    mutable QMimeProviderBase *m_provider;
+    mutable QMimeProviderBase* m_provider;
     const QString m_defaultMimeType;
     QMutex mutex;
 };
 
 QT_END_NAMESPACE
 
-#endif   // QMIMEDATABASE_P_H
+#endif // QMIMEDATABASE_P_H

@@ -42,8 +42,8 @@
 #ifndef QSTANDARDPATHS_H
 #define QSTANDARDPATHS_H
 
-#include <QtCore/qstringlist.h>
 #include "3dparty/qt5/mimetypes/qmime_global.h" // LOCAL HACK
+#include <QtCore/qstringlist.h>
 
 QT_BEGIN_HEADER
 
@@ -55,8 +55,7 @@ QT_MODULE(Core)
 
 class QStringList;
 
-class QMIME_EXPORT QStandardPaths
-{
+class QMIME_EXPORT QStandardPaths {
 public:
     // Do not re-order, must match QDesktopServices
     enum StandardLocation {
@@ -85,11 +84,11 @@ public:
     };
     Q_DECLARE_FLAGS(LocateOptions, LocateOption)
 
-    static QString locate(StandardLocation type, const QString &fileName, LocateOptions options = LocateFile);
-    static QStringList locateAll(StandardLocation type, const QString &fileName, LocateOptions options = LocateFile);
+    static QString locate(StandardLocation type, const QString& fileName, LocateOptions options = LocateFile);
+    static QStringList locateAll(StandardLocation type, const QString& fileName, LocateOptions options = LocateFile);
     static QString displayName(StandardLocation type);
 
-    static QString findExecutable(const QString &executableName, const QStringList &paths = QStringList());
+    static QString findExecutable(const QString& executableName, const QStringList& paths = QStringList());
 
 private:
     // prevent construction

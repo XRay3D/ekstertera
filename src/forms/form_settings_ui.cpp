@@ -1,8 +1,8 @@
 #include "form_settings_ui.h"
 //----------------------------------------------------------------------------------------------
 
-FormSettingsUI::FormSettingsUI(QWidget* parent) : QDialog(parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint)
-{
+FormSettingsUI::FormSettingsUI(QWidget* parent)
+    : QDialog(parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowCloseButtonHint) {
     setWindowIcon(QIcon::fromTheme("preferences-system", QIcon(":/icons/tango/preferences-system.svg")));
 
     resize(520, 150);
@@ -18,14 +18,14 @@ FormSettingsUI::FormSettingsUI(QWidget* parent) : QDialog(parent, Qt::WindowTitl
 
     m_label_language = new QLabel(this);
     m_combo_language = new QComboBox(this);
-    m_combo_language->addItem(QString::fromUtf8("Русский"),  "ru");
-    m_combo_language->addItem(QString::fromUtf8("English"),  "en");
+    m_combo_language->addItem(QString::fromUtf8("Русский"), "ru");
+    m_combo_language->addItem(QString::fromUtf8("English"), "en");
     m_combo_language->addItem(QString::fromUtf8("Français"), "fr");
     m_layout_settings->addRow(m_label_language, m_combo_language);
 
     m_layout_token = new QHBoxLayout();
-    m_label_token  = new QLabel(this);
-    m_text_token   = new QLineEdit(this);
+    m_label_token = new QLabel(this);
+    m_text_token = new QLineEdit(this);
     m_button_token = new QPushButton(this);
     m_button_token->setIcon(QIcon(":/icons/gnome/dialog-password16.png"));
     m_button_token->setMaximumSize(m_text_token->height(), m_text_token->height());
@@ -66,52 +66,46 @@ FormSettingsUI::FormSettingsUI(QWidget* parent) : QDialog(parent, Qt::WindowTitl
 }
 //----------------------------------------------------------------------------------------------
 
-FormSettingsUI::~FormSettingsUI()
-{
+FormSettingsUI::~FormSettingsUI() {
 }
 //----------------------------------------------------------------------------------------------
 
-void FormSettingsUI::closeEvent(QCloseEvent* /*event*/)
-{
+void FormSettingsUI::closeEvent(QCloseEvent* /*event*/) {
     save();
 }
 //----------------------------------------------------------------------------------------------
 
-void FormSettingsUI::changeEvent(QEvent* event)
-{
-    if (event->type() == QEvent::LanguageChange)
+void FormSettingsUI::changeEvent(QEvent* event) {
+    if(event->type() == QEvent::LanguageChange)
         retranslateUi();
     else
         QWidget::changeEvent(event);
 }
 //----------------------------------------------------------------------------------------------
 
-void FormSettingsUI::retranslateUi()
-{
-    setWindowTitle(trUtf8("Параметры"));
+void FormSettingsUI::retranslateUi() {
+    setWindowTitle(tr("Параметры"));
 
-    m_label_language->setText(trUtf8("Язык"));
-    m_label_token->setText(trUtf8("OAuth токен"));
+    m_label_language->setText(tr("Язык"));
+    m_label_token->setText(tr("OAuth токен"));
 
-    m_button_token->setToolTip(trUtf8("Получить OAuth токен"));
+    m_button_token->setToolTip(tr("Получить OAuth токен"));
 
-    m_close_to_tray->setText(trUtf8("Скрывать в трее"));
-    m_close_to_tray->setToolTip(trUtf8("Скрывать в значок в области уведомления вместо закрытия при нажатии на кнопку закрытия окна"));
+    m_close_to_tray->setText(tr("Скрывать в трее"));
+    m_close_to_tray->setToolTip(tr("Скрывать в значок в области уведомления вместо закрытия при нажатии на кнопку закрытия окна"));
 
-    m_button_ok->setText(trUtf8("OK"));
-    m_button_cancel->setText(trUtf8("Отмена"));
+    m_button_ok->setText(tr("OK"));
+    m_button_cancel->setText(tr("Отмена"));
 }
 //----------------------------------------------------------------------------------------------
 
-void FormSettingsUI::save()
-{
+void FormSettingsUI::save() {
     QSettings settings;
     settings.setValue("layout/settings", this->saveGeometry());
 }
 //----------------------------------------------------------------------------------------------
 
-void FormSettingsUI::restore()
-{
+void FormSettingsUI::restore() {
     QSettings settings;
     this->restoreGeometry(settings.value("layout/settings").toByteArray());
 }

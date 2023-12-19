@@ -41,9 +41,9 @@
 
 #include "qmimetype.h"
 
-#include "qmimetype_p.h"
 #include "qmimedatabase_p.h"
 #include "qmimeprovider_p.h"
+#include "qmimetype_p.h"
 
 #include "qmimeglobpattern_p.h"
 
@@ -52,34 +52,33 @@
 
 QT_BEGIN_NAMESPACE
 
-bool qt_isQMimeTypeDebuggingActivated (false);
+bool qt_isQMimeTypeDebuggingActivated(false);
 
 #ifndef QT_NO_DEBUG_OUTPUT
-#define DBG() if (qt_isQMimeTypeDebuggingActivated) qDebug() << static_cast<const void *>(this) << Q_FUNC_INFO
+#define DBG() \
+    if(qt_isQMimeTypeDebuggingActivated) qDebug() << static_cast<const void*>(this) << Q_FUNC_INFO
 #else
-#define DBG() if (0) qDebug() << static_cast<const void *>(this) << Q_FUNC_INFO
+#define DBG() \
+    if(0) qDebug() << static_cast<const void*>(this) << Q_FUNC_INFO
 #endif
 
 QMimeTypePrivate::QMimeTypePrivate()
-        //name(),
-        //localeComments(),
-        //genericIconName(),
-        //iconName(),
-        //globPatterns()
-        : loaded(false)
-{}
+    // name(),
+    // localeComments(),
+    // genericIconName(),
+    // iconName(),
+    // globPatterns()
+    : loaded(false) { }
 
-QMimeTypePrivate::QMimeTypePrivate(const QMimeType &other)
-        : name(other.d->name),
-        localeComments(other.d->localeComments),
-        genericIconName(other.d->genericIconName),
-        iconName(other.d->iconName),
-        globPatterns(other.d->globPatterns),
-        loaded(other.d->loaded)
-{}
+QMimeTypePrivate::QMimeTypePrivate(const QMimeType& other)
+    : name(other.d->name)
+    , localeComments(other.d->localeComments)
+    , genericIconName(other.d->genericIconName)
+    , iconName(other.d->iconName)
+    , globPatterns(other.d->globPatterns)
+    , loaded(other.d->loaded) { }
 
-void QMimeTypePrivate::clear()
-{
+void QMimeTypePrivate::clear() {
     name.clear();
     localeComments.clear();
     genericIconName.clear();
@@ -92,16 +91,10 @@ void QMimeTypePrivate::clear()
     \fn bool QMimeTypePrivate::operator==(const QMimeTypePrivate &other) const;
     Returns true if \a other equals this QMimeTypePrivate object, otherwise returns false.
  */
-bool QMimeTypePrivate::operator==(const QMimeTypePrivate &other) const
-{
+bool QMimeTypePrivate::operator==(const QMimeTypePrivate& other) const {
     DBG();
-    if (name == other.name &&
-            localeComments == other.localeComments &&
-            genericIconName == other.genericIconName &&
-            iconName == other.iconName &&
-            globPatterns == other.globPatterns) {
+    if(name == other.name && localeComments == other.localeComments && genericIconName == other.genericIconName && iconName == other.iconName && globPatterns == other.globPatterns)
         return true;
-    }
 
     DBG() << name << other.name << (name == other.name);
     DBG() << localeComments << other.localeComments << (localeComments == other.localeComments);
@@ -111,8 +104,7 @@ bool QMimeTypePrivate::operator==(const QMimeTypePrivate &other) const
     return false;
 }
 
-void QMimeTypePrivate::addGlobPattern(const QString &pattern)
-{
+void QMimeTypePrivate::addGlobPattern(const QString& pattern) {
     globPatterns.append(pattern);
 }
 
@@ -144,11 +136,10 @@ void QMimeTypePrivate::addGlobPattern(const QString &pattern)
     \fn QMimeType::QMimeType();
     Constructs this QMimeType object initialized with default property values that indicate an invalid MIME type.
  */
-QMimeType::QMimeType() :
-        d(new QMimeTypePrivate())
-{
+QMimeType::QMimeType()
+    : d(new QMimeTypePrivate()) {
     DBG() << "name():" << name();
-    //DBG() << "aliases():" << aliases();
+    // DBG() << "aliases():" << aliases();
     DBG() << "genericIconName():" << genericIconName();
     DBG() << "iconName():" << iconName();
     DBG() << "globPatterns():" << globPatterns();
@@ -160,11 +151,10 @@ QMimeType::QMimeType() :
     \fn QMimeType::QMimeType(const QMimeType &other);
     Constructs this QMimeType object as a copy of \a other.
  */
-QMimeType::QMimeType(const QMimeType &other) :
-        d(other.d)
-{
+QMimeType::QMimeType(const QMimeType& other)
+    : d(other.d) {
     DBG() << "name():" << name();
-    //DBG() << "aliases():" << aliases();
+    // DBG() << "aliases():" << aliases();
     DBG() << "genericIconName():" << genericIconName();
     DBG() << "iconName():" << iconName();
     DBG() << "globPatterns():" << globPatterns();
@@ -176,9 +166,8 @@ QMimeType::QMimeType(const QMimeType &other) :
     \fn QMimeType &QMimeType::operator=(const QMimeType &other);
     Assigns the data of \a other to this QMimeType object, and returns a reference to this object.
  */
-QMimeType &QMimeType::operator=(const QMimeType &other)
-{
-    if (d != other.d)
+QMimeType& QMimeType::operator=(const QMimeType& other) {
+    if(d != other.d)
         d = other.d;
     return *this;
 }
@@ -187,11 +176,10 @@ QMimeType &QMimeType::operator=(const QMimeType &other)
     \fn QMimeType::QMimeType(const QMimeTypePrivate &dd);
     Assigns the data of the QMimeTypePrivate \a dd to this QMimeType object, and returns a reference to this object.
  */
-QMimeType::QMimeType(const QMimeTypePrivate &dd) :
-        d(new QMimeTypePrivate(dd))
-{
+QMimeType::QMimeType(const QMimeTypePrivate& dd)
+    : d(new QMimeTypePrivate(dd)) {
     DBG() << "name():" << name();
-    //DBG() << "aliases():" << aliases();
+    // DBG() << "aliases():" << aliases();
     DBG() << "genericIconName():" << genericIconName();
     DBG() << "iconName():" << iconName();
     DBG() << "globPatterns():" << globPatterns();
@@ -215,10 +203,9 @@ QMimeType::QMimeType(const QMimeTypePrivate &dd) :
     \fn QMimeType::~QMimeType();
     Destroys the QMimeType object, and releases the d pointer.
  */
-QMimeType::~QMimeType()
-{
+QMimeType::~QMimeType() {
     DBG() << "name():" << name();
-    //DBG() << "aliases():" << aliases();
+    // DBG() << "aliases():" << aliases();
     DBG() << "genericIconName():" << genericIconName();
     DBG() << "iconName():" << iconName();
     DBG() << "globPatterns():" << globPatterns();
@@ -230,8 +217,7 @@ QMimeType::~QMimeType()
     \fn bool QMimeType::operator==(const QMimeType &other) const;
     Returns true if \a other equals this QMimeType object, otherwise returns false.
  */
-bool QMimeType::operator==(const QMimeType &other) const
-{
+bool QMimeType::operator==(const QMimeType& other) const {
     return d == other.d || *d == *other.d;
 }
 
@@ -246,8 +232,7 @@ bool QMimeType::operator==(const QMimeType &other) const
     A valid MIME type has a non-empty name().
     The invalid MIME type is the default-constructed QMimeType.
  */
-bool QMimeType::isValid() const
-{
+bool QMimeType::isValid() const {
     return !d->name.isEmpty();
 }
 
@@ -256,8 +241,7 @@ bool QMimeType::isValid() const
     Returns true if this MIME type is the default MIME type which
     applies to all files: application/octet-stream.
  */
-bool QMimeType::isDefault() const
-{
+bool QMimeType::isDefault() const {
     return d->name == QMimeDatabasePrivate::instance()->defaultMimeType();
 }
 
@@ -265,8 +249,7 @@ bool QMimeType::isDefault() const
     \fn QString QMimeType::name() const;
     Returns the name of the MIME type.
  */
-QString QMimeType::name() const
-{
+QString QMimeType::name() const {
     return d->name;
 }
 
@@ -275,23 +258,22 @@ QString QMimeType::name() const
 
     The system language (QLocale::system().name()) is used to select the appropriate translation.
  */
-QString QMimeType::comment() const
-{
+QString QMimeType::comment() const {
     QMimeDatabasePrivate::instance()->provider()->loadMimeTypePrivate(*d);
 
     QStringList languageList;
     languageList << QLocale::system().name();
-    Q_FOREACH (const QString &language, languageList) {
+    Q_FOREACH(const QString& language, languageList) {
         const QString lang = language == QLatin1String("C") ? QLatin1String("en_US") : language;
         const QString comm = d->localeComments.value(lang);
-        if (!comm.isEmpty())
+        if(!comm.isEmpty())
             return comm;
         const int pos = lang.indexOf(QLatin1Char('_'));
-        if (pos != -1) {
+        if(pos != -1) {
             // "pt_BR" not found? try just "pt"
             const QString shortLang = lang.left(pos);
             const QString commShort = d->localeComments.value(shortLang);
-            if (!commShort.isEmpty())
+            if(!commShort.isEmpty())
                 return commShort;
         }
     }
@@ -311,10 +293,9 @@ QString QMimeType::comment() const
 
     The icon name can be given to QIcon::fromTheme() in order to load the icon.
  */
-QString QMimeType::genericIconName() const
-{
+QString QMimeType::genericIconName() const {
     QMimeDatabasePrivate::instance()->provider()->loadGenericIcon(*d);
-    if (d->genericIconName.isEmpty()) {
+    if(d->genericIconName.isEmpty()) {
         // From the spec:
         // If the generic icon name is empty (not specified by the mimetype definition)
         // then the mimetype is used to generate the generic icon by using the top-level
@@ -322,7 +303,7 @@ QString QMimeType::genericIconName() const
         // (i.e. "video-x-generic" in the previous example).
         QString group = name();
         const int slashindex = group.indexOf(QLatin1Char('/'));
-        if (slashindex != -1)
+        if(slashindex != -1)
             group = group.left(slashindex);
         return group + QLatin1String("-x-generic");
     }
@@ -335,14 +316,13 @@ QString QMimeType::genericIconName() const
 
     The icon name can be given to QIcon::fromTheme() in order to load the icon.
  */
-QString QMimeType::iconName() const
-{
+QString QMimeType::iconName() const {
     QMimeDatabasePrivate::instance()->provider()->loadIcon(*d);
-    if (d->iconName.isEmpty()) {
+    if(d->iconName.isEmpty()) {
         // Make default icon name from the mimetype name
         d->iconName = name();
         const int slashindex = d->iconName.indexOf(QLatin1Char('/'));
-        if (slashindex != -1)
+        if(slashindex != -1)
             d->iconName[slashindex] = QLatin1Char('-');
     }
     return d->iconName;
@@ -352,8 +332,7 @@ QString QMimeType::iconName() const
     \fn QStringList QMimeType::globPatterns() const;
     Returns the list of glob matching patterns.
  */
-QStringList QMimeType::globPatterns() const
-{
+QStringList QMimeType::globPatterns() const {
     QMimeDatabasePrivate::instance()->provider()->loadMimeTypePrivate(*d);
     return d->globPatterns;
 }
@@ -370,22 +349,20 @@ QStringList QMimeType::globPatterns() const
     has two parents: application/x-executable and text/plain. This makes
     it possible to both execute perl scripts, and to open them in text editors.
 */
-QStringList QMimeType::parentMimeTypes() const
-{
+QStringList QMimeType::parentMimeTypes() const {
     return QMimeDatabasePrivate::instance()->provider()->parents(d->name);
 }
 
-static void collectParentMimeTypes(const QString &mime, QStringList &allParents)
-{
+static void collectParentMimeTypes(const QString& mime, QStringList& allParents) {
     QStringList parents = QMimeDatabasePrivate::instance()->provider()->parents(mime);
-    foreach (const QString &parent, parents) {
+    foreach(const QString& parent, parents) {
         // I would use QSet, but since order matters I better not
-        if (!allParents.contains(parent))
+        if(!allParents.contains(parent))
             allParents.append(parent);
     }
     // We want a breadth-first search, so that the least-specific parent (octet-stream) is last
     // This means iterating twice, unfortunately.
-    foreach (const QString &parent, parents) {
+    foreach(const QString& parent, parents) {
         collectParentMimeTypes(parent, allParents);
     }
 }
@@ -400,8 +377,7 @@ static void collectParentMimeTypes(const QString &mime, QStringList &allParents)
     Note that application/octet-stream is the ultimate parent for all types
     of files (but not directories).
 */
-QStringList QMimeType::allAncestors() const
-{
+QStringList QMimeType::allAncestors() const {
     QStringList allParents;
     collectParentMimeTypes(d->name, allParents);
     return allParents;
@@ -411,16 +387,13 @@ QStringList QMimeType::allAncestors() const
     \fn QStringList QMimeType::suffixes() const;
     Returns the known suffixes for the MIME type.
  */
-QStringList QMimeType::suffixes() const
-{
+QStringList QMimeType::suffixes() const {
     QMimeDatabasePrivate::instance()->provider()->loadMimeTypePrivate(*d);
 
     QStringList result;
-    foreach (const QString &pattern, d->globPatterns) {
+    foreach(const QString& pattern, d->globPatterns) {
         // Not a simple suffix if if looks like: README or *. or *.* or *.JP*G or *.JP?
-        if (pattern.startsWith(QLatin1String("*.")) &&
-            pattern.length() > 2 &&
-            pattern.indexOf(QLatin1Char('*'), 2) < 0 && pattern.indexOf(QLatin1Char('?'), 2) < 0) {
+        if(pattern.startsWith(QLatin1String("*.")) && pattern.length() > 2 && pattern.indexOf(QLatin1Char('*'), 2) < 0 && pattern.indexOf(QLatin1Char('?'), 2) < 0) {
             const QString suffix = pattern.mid(2);
             result.append(suffix);
         }
@@ -433,8 +406,7 @@ QStringList QMimeType::suffixes() const
     \fn QString QMimeType::preferredSuffix() const;
     Returns the preferred suffix for the MIME type.
  */
-QString QMimeType::preferredSuffix() const
-{
+QString QMimeType::preferredSuffix() const {
     const QStringList suffixList = suffixes();
     return suffixList.isEmpty() ? QString() : suffixList.at(0);
 }
@@ -443,19 +415,18 @@ QString QMimeType::preferredSuffix() const
     \fn QString QMimeType::filterString() const;
     Returns a filter string usable for a file dialog.
 */
-QString QMimeType::filterString() const
-{
+QString QMimeType::filterString() const {
     QMimeDatabasePrivate::instance()->provider()->loadMimeTypePrivate(*d);
     QString filter;
 
-    if (!d->globPatterns.empty()) {
+    if(!d->globPatterns.empty()) {
         filter += comment() + QLatin1String(" (");
-        for (int i = 0; i < d->globPatterns.size(); ++i) {
-            if (i != 0)
+        for(int i = 0; i < d->globPatterns.size(); ++i) {
+            if(i != 0)
                 filter += QLatin1Char(' ');
             filter += d->globPatterns.at(i);
         }
-        filter +=  QLatin1Char(')');
+        filter += QLatin1Char(')');
     }
 
     return filter;
@@ -467,9 +438,8 @@ QString QMimeType::filterString() const
     or inherits \a mimeTypeName (see parentMimeTypes()),
     or \a mimeTypeName is an alias for this mimetype.
  */
-bool QMimeType::inherits(const QString &mimeTypeName) const
-{
-    if (d->name == mimeTypeName)
+bool QMimeType::inherits(const QString& mimeTypeName) const {
+    if(d->name == mimeTypeName)
         return true;
     return QMimeDatabasePrivate::instance()->inherits(d->name, mimeTypeName);
 }

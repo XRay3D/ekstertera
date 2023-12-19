@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 
-
 #ifndef MIMETYPEPARSER_P_H
 #define MIMETYPEPARSER_P_H
 
@@ -50,22 +49,21 @@ QT_BEGIN_NAMESPACE
 
 class QIODevice;
 
-class QMimeTypeParserBase
-{
+class QMimeTypeParserBase {
     Q_DISABLE_COPY(QMimeTypeParserBase)
 
 public:
-    QMimeTypeParserBase() {}
-    virtual ~QMimeTypeParserBase() {}
+    QMimeTypeParserBase() { }
+    virtual ~QMimeTypeParserBase() { }
 
-    bool parse(QIODevice *dev, const QString &fileName, QString *errorMessage);
+    bool parse(QIODevice* dev, const QString& fileName, QString* errorMessage);
 
 protected:
-    virtual bool process(const QMimeType &t, QString *errorMessage) = 0;
-    virtual bool process(const QMimeGlobPattern &t, QString *errorMessage) = 0;
-    virtual void processParent(const QString &child, const QString &parent) = 0;
-    virtual void processAlias(const QString &alias, const QString &name) = 0;
-    virtual void processMagicMatcher(const QMimeMagicRuleMatcher &matcher) = 0;
+    virtual bool process(const QMimeType& t, QString* errorMessage) = 0;
+    virtual bool process(const QMimeGlobPattern& t, QString* errorMessage) = 0;
+    virtual void processParent(const QString& child, const QString& parent) = 0;
+    virtual void processAlias(const QString& alias, const QString& name) = 0;
+    virtual void processMagicMatcher(const QMimeMagicRuleMatcher& matcher) = 0;
 
 private:
     enum ParseState {
@@ -84,33 +82,33 @@ private:
         ParseError
     };
 
-    static ParseState nextState(ParseState currentState, const QStringRef &startElement);
+    static ParseState nextState(ParseState currentState, const QStringRef& startElement);
 };
 
-
-class QMimeTypeParser : public QMimeTypeParserBase
-{
+class QMimeTypeParser : public QMimeTypeParserBase {
 public:
-    explicit QMimeTypeParser(QMimeXMLProvider &provider) : m_provider(provider) {}
+    explicit QMimeTypeParser(QMimeXMLProvider& provider)
+        : m_provider(provider) { }
 
 protected:
-    inline bool process(const QMimeType &t, QString *)
-    { m_provider.addMimeType(t); return true; }
+    inline bool process(const QMimeType& t, QString*) {
+        m_provider.addMimeType(t);
+        return true;
+    }
 
-    inline bool process(const QMimeGlobPattern &glob, QString *)
-    { m_provider.addGlobPattern(glob); return true; }
+    inline bool process(const QMimeGlobPattern& glob, QString*) {
+        m_provider.addGlobPattern(glob);
+        return true;
+    }
 
-    inline void processParent(const QString &child, const QString &parent)
-    { m_provider.addParent(child, parent); }
+    inline void processParent(const QString& child, const QString& parent) { m_provider.addParent(child, parent); }
 
-    inline void processAlias(const QString &alias, const QString &name)
-    { m_provider.addAlias(alias, name); }
+    inline void processAlias(const QString& alias, const QString& name) { m_provider.addAlias(alias, name); }
 
-    inline void processMagicMatcher(const QMimeMagicRuleMatcher &matcher)
-    { m_provider.addMagicMatcher(matcher); }
+    inline void processMagicMatcher(const QMimeMagicRuleMatcher& matcher) { m_provider.addMagicMatcher(matcher); }
 
 private:
-    QMimeXMLProvider &m_provider;
+    QMimeXMLProvider& m_provider;
 };
 
 QT_END_NAMESPACE

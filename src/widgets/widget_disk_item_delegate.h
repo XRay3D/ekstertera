@@ -11,23 +11,19 @@
 /*!
  * \brief Делегат для ручной отрисовки элемента виджета проводника Яндекс.Диск
  */
-class WidgetDiskItemDelegate : public QStyledItemDelegate
-{
-    public:
-
-        WidgetDiskItemDelegate(QObject* parent = NULL);
-        ~WidgetDiskItemDelegate();
+class WidgetDiskItemDelegate : public QStyledItemDelegate {
+public:
+    WidgetDiskItemDelegate(QObject* parent = NULL);
+    ~WidgetDiskItemDelegate();
 
     // QStyledItemDelegate
-    public:
+public:
+    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-        QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const;
-        void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
-
-    private:
-
-        int adjust_dx;   /*!< \brief Отсуп у горизонтальных границ */
-        int adjust_dy;   /*!< \brief Отсуп у вертикальных границ   */
+private:
+    int adjust_dx; /*!< \brief Отсуп у горизонтальных границ */
+    int adjust_dy; /*!< \brief Отсуп у вертикальных границ   */
 };
 
-#endif   // _ekstertera_widgets_widget_disk_item_delegate_h_
+#endif // _ekstertera_widgets_widget_disk_item_delegate_h_

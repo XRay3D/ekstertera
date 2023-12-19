@@ -49,19 +49,18 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QMimeTypePrivate : public QSharedData
-{
+class Q_AUTOTEST_EXPORT QMimeTypePrivate : public QSharedData {
 public:
     typedef QHash<QString, QString> LocaleHash;
 
     QMimeTypePrivate();
-    explicit QMimeTypePrivate(const QMimeType &other);
+    explicit QMimeTypePrivate(const QMimeType& other);
 
     void clear();
 
-    bool operator==(const QMimeTypePrivate &other) const;
+    bool operator==(const QMimeTypePrivate& other) const;
 
-    void addGlobPattern(const QString &pattern);
+    void addGlobPattern(const QString& pattern);
 
     QString name;
     LocaleHash localeComments;
@@ -73,42 +72,38 @@ public:
 
 QT_END_NAMESPACE
 
-#define QMIMETYPE_BUILDER \
-    QT_BEGIN_NAMESPACE \
-    static QMimeType buildQMimeType ( \
-                         const QString &name, \
-                         const QString &genericIconName, \
-                         const QString &iconName, \
-                         const QStringList &globPatterns \
-                     ) \
-    { \
-        QMimeTypePrivate qMimeTypeData; \
-        qMimeTypeData.name = name; \
+#define QMIMETYPE_BUILDER                                \
+    QT_BEGIN_NAMESPACE                                   \
+    static QMimeType buildQMimeType(                     \
+        const QString& name,                             \
+        const QString& genericIconName,                  \
+        const QString& iconName,                         \
+        const QStringList& globPatterns) {               \
+        QMimeTypePrivate qMimeTypeData;                  \
+        qMimeTypeData.name = name;                       \
         qMimeTypeData.genericIconName = genericIconName; \
-        qMimeTypeData.iconName = iconName; \
-        qMimeTypeData.globPatterns = globPatterns; \
-        return QMimeType(qMimeTypeData); \
-    } \
+        qMimeTypeData.iconName = iconName;               \
+        qMimeTypeData.globPatterns = globPatterns;       \
+        return QMimeType(qMimeTypeData);                 \
+    }                                                    \
     QT_END_NAMESPACE
 
 #ifdef Q_COMPILER_RVALUE_REFS
-#define QMIMETYPE_BUILDER_FROM_RVALUE_REFS \
-    QT_BEGIN_NAMESPACE \
-    static QMimeType buildQMimeType ( \
-                         QString &&name, \
-                         QString &&genericIconName, \
-                         QString &&iconName, \
-                         QStringList &&globPatterns \
-                     ) \
-    { \
-        QMimeTypePrivate qMimeTypeData; \
-        qMimeTypeData.name = std::move(name); \
+#define QMIMETYPE_BUILDER_FROM_RVALUE_REFS                          \
+    QT_BEGIN_NAMESPACE                                              \
+    static QMimeType buildQMimeType(                                \
+        QString&& name,                                             \
+        QString&& genericIconName,                                  \
+        QString&& iconName,                                         \
+        QStringList&& globPatterns) {                               \
+        QMimeTypePrivate qMimeTypeData;                             \
+        qMimeTypeData.name = std::move(name);                       \
         qMimeTypeData.genericIconName = std::move(genericIconName); \
-        qMimeTypeData.iconName = std::move(iconName); \
-        qMimeTypeData.globPatterns = std::move(globPatterns); \
-        return QMimeType(qMimeTypeData); \
-    } \
+        qMimeTypeData.iconName = std::move(iconName);               \
+        qMimeTypeData.globPatterns = std::move(globPatterns);       \
+        return QMimeType(qMimeTypeData);                            \
+    }                                                               \
     QT_END_NAMESPACE
 #endif
 
-#endif   // QMIMETYPE_P_H
+#endif // QMIMETYPE_P_H

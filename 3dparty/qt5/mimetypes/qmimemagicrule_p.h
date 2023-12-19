@@ -43,24 +43,33 @@
 #define QMIMEMAGICRULE_P_H
 
 #include <QtCore/qbytearray.h>
-#include <QtCore/qscopedpointer.h>
 #include <QtCore/qlist.h>
+#include <QtCore/qscopedpointer.h>
 
 QT_BEGIN_NAMESPACE
 
 class QMimeMagicRulePrivate;
-class QMimeMagicRule
-{
+class QMimeMagicRule {
 public:
-    enum Type { Invalid = 0, String, Host16, Host32, Big16, Big32, Little16, Little32, Byte };
+    enum Type {
+        Invalid = 0,
+        String,
+        Host16,
+        Host32,
+        Big16,
+        Big32,
+        Little16,
+        Little32,
+        Byte
+    };
 
-    QMimeMagicRule(Type type, const QByteArray &value, int startPos, int endPos, const QByteArray &mask = QByteArray());
-    QMimeMagicRule(const QMimeMagicRule &other);
+    QMimeMagicRule(Type type, const QByteArray& value, int startPos, int endPos, const QByteArray& mask = QByteArray());
+    QMimeMagicRule(const QMimeMagicRule& other);
     ~QMimeMagicRule();
 
-    QMimeMagicRule &operator=(const QMimeMagicRule &other);
+    QMimeMagicRule& operator=(const QMimeMagicRule& other);
 
-    bool operator==(const QMimeMagicRule &other) const;
+    bool operator==(const QMimeMagicRule& other) const;
 
     Type type() const;
     QByteArray value() const;
@@ -70,14 +79,14 @@ public:
 
     bool isValid() const;
 
-    bool matches(const QByteArray &data) const;
+    bool matches(const QByteArray& data) const;
 
     QList<QMimeMagicRule> m_subMatches;
 
-    static Type type(const QByteArray &type);
+    static Type type(const QByteArray& type);
     static QByteArray typeName(Type type);
 
-    static bool matchSubstring(const char *dataPtr, int dataSize, int rangeStart, int rangeLength, int valueLength, const char *valueData, const char *mask);
+    static bool matchSubstring(const char* dataPtr, int dataSize, int rangeStart, int rangeLength, int valueLength, const char* valueData, const char* mask);
 
 private:
     const QScopedPointer<QMimeMagicRulePrivate> d;

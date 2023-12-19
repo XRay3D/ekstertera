@@ -3,11 +3,11 @@
  * \brief Точка входа
  */
 //----------------------------------------------------------------------------------------------
+#include "forms/form_main.h"
+#include "utils/clipboard.h"
 #include "utils/icon.h"
 #include "utils/settings.h"
-#include "utils/clipboard.h"
 #include "utils/translator.h"
-#include "forms/form_main.h"
 //----------------------------------------------------------------------------------------------
 /*!
  * (no comments)
@@ -15,8 +15,7 @@
  * \param argv (no comments)
  * \return (no comments)
  */
-int main (int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     // инициализация ресурсов
     Q_INIT_RESOURCE(resource);
 

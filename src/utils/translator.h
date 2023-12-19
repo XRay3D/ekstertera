@@ -11,49 +11,46 @@
 /*!
  * \brief Транслятор для смены языка приложения
  */
-class EteraTranslator
-{
-    public:
+class EteraTranslator {
+public:
+    /*!
+     * \brief Инициализация локализации
+     */
+    static void init();
 
-        /*!
-         * \brief Инициализация локализации
-         */
-        static void init();
+    /*!
+     * \brief Освобождение ресурсов локализации
+     */
+    static void cleanup();
 
-        /*!
-         * \brief Освобождение ресурсов локализации
-         */
-        static void cleanup();
+    /*!
+     * \brief Singleton
+     * \return Транслятор для смены языка
+     */
+    static EteraTranslator* instance();
 
-        /*!
-         * \brief Singleton
-         * \return Транслятор для смены языка
-         */
-        static EteraTranslator* instance();
+    /*!
+     * \brief Смена языка приложения
+     * \return Имя языка (ru, en, tr)
+     */
+    void changeTranslator(const QString& language);
 
-        /*!
-         * \brief Смена языка приложения
-         * \return Имя языка (ru, en, tr)
-         */
-        void changeTranslator(const QString& language);
+    /*!
+     * \brief Получение текущего языка приложения
+     * \return Имя языка (ru, en, tr)
+     */
+    QString language() const { return m_language; }
 
-        /*!
-         * \brief Получение текущего языка приложения
-         * \return Имя языка (ru, en, tr)
-         */
-        QString language() const { return m_language; }
+private:
+    EteraTranslator();
+    ~EteraTranslator();
 
-    private:
-
-        EteraTranslator();
-        ~EteraTranslator();
-
-        QString     m_language;         /*!< \brief Текущий язык                            */
-        QTranslator m_qt_translator;    /*!< \brief Транслятор стандартных сообщений        */
+    QString m_language;          /*!< \brief Текущий язык                            */
+    QTranslator m_qt_translator; /*!< \brief Транслятор стандартных сообщений        */
 #if QT_VERSION >= 0x050000
-        QTranslator m_qt5_translator;   /*!< \brief Транслятор стандартных сообщений Qt 5.x */
+    QTranslator m_qt5_translator; /*!< \brief Транслятор стандартных сообщений Qt 5.x */
 #endif
-        QTranslator m_app_translator;   /*!< \brief Транслятор приложения                   */
+    QTranslator m_app_translator; /*!< \brief Транслятор приложения                   */
 };
 
-#endif   // _ekstertera_translator_h_
+#endif // _ekstertera_translator_h_

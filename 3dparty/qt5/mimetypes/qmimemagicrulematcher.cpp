@@ -59,39 +59,32 @@ QT_BEGIN_NAMESPACE
     \sa QMimeTypeParserBase, MimeTypeParser
 */
 
-QMimeMagicRuleMatcher::QMimeMagicRuleMatcher(const QString &mime, unsigned thePriority) :
-    m_list(),
-    m_priority(thePriority),
-    m_mimetype(mime)
-{
+QMimeMagicRuleMatcher::QMimeMagicRuleMatcher(const QString& mime, unsigned thePriority)
+    : m_list()
+    , m_priority(thePriority)
+    , m_mimetype(mime) {
 }
 
-bool QMimeMagicRuleMatcher::operator==(const QMimeMagicRuleMatcher &other)
-{
-    return m_list == other.m_list &&
-           m_priority == other.m_priority;
+bool QMimeMagicRuleMatcher::operator==(const QMimeMagicRuleMatcher& other) {
+    return m_list == other.m_list && m_priority == other.m_priority;
 }
 
-void QMimeMagicRuleMatcher::addRule(const QMimeMagicRule &rule)
-{
+void QMimeMagicRuleMatcher::addRule(const QMimeMagicRule& rule) {
     m_list.append(rule);
 }
 
-void QMimeMagicRuleMatcher::addRules(const QList<QMimeMagicRule> &rules)
-{
+void QMimeMagicRuleMatcher::addRules(const QList<QMimeMagicRule>& rules) {
     m_list.append(rules);
 }
 
-QList<QMimeMagicRule> QMimeMagicRuleMatcher::magicRules() const
-{
+QList<QMimeMagicRule> QMimeMagicRuleMatcher::magicRules() const {
     return m_list;
 }
 
 // Check for a match on contents of a file
-bool QMimeMagicRuleMatcher::matches(const QByteArray &data) const
-{
-    foreach (const QMimeMagicRule &magicRule, m_list) {
-        if (magicRule.matches(data))
+bool QMimeMagicRuleMatcher::matches(const QByteArray& data) const {
+    foreach(const QMimeMagicRule& magicRule, m_list) {
+        if(magicRule.matches(data))
             return true;
     }
 
@@ -99,8 +92,7 @@ bool QMimeMagicRuleMatcher::matches(const QByteArray &data) const
 }
 
 // Return a priority value from 1..100
-unsigned QMimeMagicRuleMatcher::priority() const
-{
+unsigned QMimeMagicRuleMatcher::priority() const {
     return m_priority;
 }
 

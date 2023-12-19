@@ -11,42 +11,39 @@
 /*!
  * \brief Виджет отображения текущего пути на Яндекс.Диск
  */
-class WidgetDiskPath : public QWidget
-{
+class WidgetDiskPath : public QWidget {
     Q_OBJECT
 
-    public:
+public:
+    /*!
+     * \brief Конструктор
+     * \param parent Родительский виджет
+     */
+    WidgetDiskPath(QWidget* parent);
+    ~WidgetDiskPath();
 
-        /*!
-         * \brief Конструктор
-         * \param parent Родительский виджет
-         */
-        WidgetDiskPath(QWidget* parent);
-        ~WidgetDiskPath();
+    /*!
+     * \brief Сменить отображаемый путь
+     * \param path Путь
+     */
+    void changePath(const QString& path);
 
-        /*!
-         * \brief Сменить отображаемый путь
-         * \param path Путь
-         */
-        void changePath(const QString& path);
+private:
+    /*!
+     * \brief Список кнопок
+     */
+    QList<QToolButton*> m_buttons;
 
-    private:
+public slots:
 
-        /*!
-         * \brief Список кнопок
-         */
-        QList<QToolButton*> m_buttons;
+    void button_clicked(); /*!< \brief Нажатие на кнопку пути */
 
-    public slots:
+signals:
 
-        void button_clicked();   /*!< \brief Нажатие на кнопку пути */
-
-    signals:
-
-        /*!
-         * \brief Сигнал необходимости смены пути
-         */
-        void onPathChangeRequest(const QString& path);
+    /*!
+     * \brief Сигнал необходимости смены пути
+     */
+    void onPathChangeRequest(const QString& path);
 };
 
-#endif   // _ekstertera_widgets_widget_disk_path_h_
+#endif // _ekstertera_widgets_widget_disk_path_h_

@@ -53,30 +53,26 @@ class QMimeTypePrivate;
 class QFileinfo;
 class QStringList;
 
-class QMIME_EXPORT QMimeType
-{
+class QMIME_EXPORT QMimeType {
 public:
     QMimeType();
-    QMimeType(const QMimeType &other);
-    QMimeType &operator=(const QMimeType &other);
+    QMimeType(const QMimeType& other);
+    QMimeType& operator=(const QMimeType& other);
 #ifdef Q_COMPILER_RVALUE_REFS
-    QMimeType &operator=(QMimeType &&other)
-    {
+    QMimeType& operator=(QMimeType&& other) {
         qSwap(d, other.d);
         return *this;
     }
 #endif
-    void swap(QMimeType &other)
-    {
+    void swap(QMimeType& other) {
         qSwap(d, other.d);
     }
-    explicit QMimeType(const QMimeTypePrivate &dd);
+    explicit QMimeType(const QMimeTypePrivate& dd);
     ~QMimeType();
 
-    bool operator==(const QMimeType &other) const;
+    bool operator==(const QMimeType& other) const;
 
-    inline bool operator!=(const QMimeType &other) const
-    {
+    inline bool operator!=(const QMimeType& other) const {
         return !operator==(other);
     }
 
@@ -94,7 +90,7 @@ public:
     QStringList suffixes() const;
     QString preferredSuffix() const;
 
-    bool inherits(const QString &mimeTypeName) const;
+    bool inherits(const QString& mimeTypeName) const;
 
     QString filterString() const;
 
@@ -111,4 +107,4 @@ protected:
 
 QT_END_NAMESPACE
 
-#endif   // QMIMETYPE_H
+#endif // QMIMETYPE_H

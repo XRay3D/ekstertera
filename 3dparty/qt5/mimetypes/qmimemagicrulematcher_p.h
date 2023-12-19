@@ -50,18 +50,17 @@
 
 QT_BEGIN_NAMESPACE
 
-class QMimeMagicRuleMatcher
-{
+class QMimeMagicRuleMatcher {
 public:
-    explicit QMimeMagicRuleMatcher(const QString &mime, unsigned priority = 65535);
+    explicit QMimeMagicRuleMatcher(const QString& mime, unsigned priority = 65535);
 
-    bool operator==(const QMimeMagicRuleMatcher &other);
+    bool operator==(const QMimeMagicRuleMatcher& other);
 
-    void addRule(const QMimeMagicRule &rule);
-    void addRules(const QList<QMimeMagicRule> &rules);
+    void addRule(const QMimeMagicRule& rule);
+    void addRules(const QList<QMimeMagicRule>& rules);
     QList<QMimeMagicRule> magicRules() const;
 
-    bool matches(const QByteArray &data) const;
+    bool matches(const QByteArray& data) const;
 
     unsigned priority() const;
 

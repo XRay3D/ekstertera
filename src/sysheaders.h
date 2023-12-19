@@ -10,70 +10,70 @@
 // стандартные заголовочные файлы Qt
 //
 
-#include <QSet>
-#include <QDir>
-#include <QMenu>
-#include <QTimer>
-#include <QLabel>
-#include <QDebug>
-#include <QQueue>
-#include <QObject>
-#include <QWidget>
-#include <QDialog>
-#include <QBuffer>
-#include <QThread>
-#include <QPainter>
-#include <QMenuBar>
-#include <QToolBar>
-#include <QDateTime>
-#include <QMultiMap>
-#include <QCheckBox>
-#include <QComboBox>
-#include <QLineEdit>
-#include <QSettings>
-#include <QMimeData>
-#include <QFileInfo>
-#include <QTreeView>
-#include <QStatusBar>
-#include <QScrollBar>
-#include <QSslCipher>
-#include <QTextCodec>
-#include <QFormLayout>
-#include <QPushButton>
-#include <QSpacerItem>
-#include <QListWidget>
-#include <QTreeWidget>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QMessageBox>
-#include <QMainWindow>
-#include <QCloseEvent>
-#include <QTranslator>
-#include <QStringList>
-#include <QWheelEvent>
-#include <QToolButton>
-#include <QFileDialog>
-#include <QInputDialog>
-#include <QProgressBar>
 #include <QApplication>
+#include <QBuffer>
+#include <QCheckBox>
+#include <QCloseEvent>
+#include <QComboBox>
+#include <QDateTime>
+#include <QDebug>
+#include <QDesktopServices>
+#include <QDialog>
+#include <QDir>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QFormLayout>
+#include <QHBoxLayout>
+#include <QInputDialog>
+#include <QLabel>
 #include <QLibraryInfo>
+#include <QLineEdit>
+#include <QListWidget>
+#include <QListWidgetItem>
+#include <QMainWindow>
+#include <QMenu>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QMimeData>
+#include <QMultiMap>
+#include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
-#include <QListWidgetItem>
-#include <QSystemTrayIcon>
-#include <QDesktopServices>
-#include <QSslConfiguration>
-#include <QStyledItemDelegate>
+#include <QObject>
+#include <QPainter>
 #include <QProcessEnvironment>
-#include <QNetworkAccessManager>
+#include <QProgressBar>
+#include <QPushButton>
+#include <QQueue>
+#include <QScrollBar>
+#include <QSet>
+#include <QSettings>
+#include <QSpacerItem>
+#include <QSslCipher>
+#include <QSslConfiguration>
+#include <QStatusBar>
+#include <QStringList>
+#include <QStyledItemDelegate>
+#include <QSystemTrayIcon>
+#include <QTextCodec>
+#include <QThread>
+#include <QTimer>
+#include <QToolBar>
+#include <QToolButton>
+#include <QTranslator>
+#include <QTreeView>
+#include <QTreeWidget>
+#include <QVBoxLayout>
+#include <QWheelEvent>
+#include <QWidget>
 
 #if QT_VERSION >= 0x050000
-    // в Qt 5.x часть методов QUrl типа addQueryItem признаны obsolete
-    #include <QUrlQuery>
+// в Qt 5.x часть методов QUrl типа addQueryItem признаны obsolete
+#include <QUrlQuery>
 
-    // Qt 5.x specific
-    #include <QMimeType>
-    #include <QMimeDatabase>
+// Qt 5.x specific
+#include <QMimeDatabase>
+#include <QMimeType>
 #endif
 
 //
@@ -81,33 +81,33 @@
 //
 
 #ifdef Q_WS_WIN
-    // стандартные определения для Windows 7
-    #ifndef _WIN32_WINNT_WIN7
-        #define _WIN32_WINNT_WIN7 0x0601
-    #endif
-    #ifndef WINVER
-        #define WINVER _WIN32_WINNT_WIN7
-    #endif
-    #ifndef _WIN32_WINNT
-        #define _WIN32_WINNT WINVER
-    #endif
-    #ifndef NTDDI_WIN7
-        #define NTDDI_WIN7 0x06010000
-    #endif
-    #ifndef NTDDI_VERSION
-        #define NTDDI_VERSION NTDDI_WIN7
-    #endif
-    #ifndef _WIN32_IE_IE80
-        #define _WIN32_IE_IE80 0x0800
-    #endif
-    #ifndef _WIN32_IE
-        #define _WIN32_IE _WIN32_IE_IE80
-    #endif
+// стандартные определения для Windows 7
+#ifndef _WIN32_WINNT_WIN7
+#define _WIN32_WINNT_WIN7 0x0601
+#endif
+#ifndef WINVER
+#define WINVER _WIN32_WINNT_WIN7
+#endif
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT WINVER
+#endif
+#ifndef NTDDI_WIN7
+#define NTDDI_WIN7 0x06010000
+#endif
+#ifndef NTDDI_VERSION
+#define NTDDI_VERSION NTDDI_WIN7
+#endif
+#ifndef _WIN32_IE_IE80
+#define _WIN32_IE_IE80 0x0800
+#endif
+#ifndef _WIN32_IE
+#define _WIN32_IE _WIN32_IE_IE80
+#endif
 
-    #include <windows.h>
-    #include <shellapi.h>
-    #include <commctrl.h>
-    #include <commoncontrols.h>
+#include <commctrl.h>
+#include <commoncontrols.h>
+#include <shellapi.h>
+#include <windows.h>
 #endif
 
 //
@@ -119,9 +119,9 @@
 
 // бэкпорты из Qt 5.x
 #if QT_VERSION < 0x050000
-    // https://qt.gitorious.org/qtplayground/mimetypes
-    #include "3dparty/qt5/mimetypes/qmimetype.h"
-    #include "3dparty/qt5/mimetypes/qmimedatabase.h"
+// https://qt.gitorious.org/qtplayground/mimetypes
+#include "3dparty/qt5/mimetypes/qmimedatabase.h"
+#include "3dparty/qt5/mimetypes/qmimetype.h"
 #endif
 
 //
@@ -130,29 +130,29 @@
 
 // В Qt 5.x более нет макроса Q_WS_X11, который использовался для определения *nix подобных систем, определяем свои
 #ifdef Q_WS_WIN
-    #define ETERA_WS_WIN
+#define ETERA_WS_WIN
 #endif
 
 #ifdef Q_WS_MAC
-    #define ETERA_WS_MAC
+#define ETERA_WS_MAC
 #endif
 
 #if defined(Q_OS_LINUX) || defined(Q_OS_UNIX)
-    #define ETERA_WS_X11
+#define ETERA_WS_X11
 #endif
 
 #if defined(ETERA_WS_X11) || defined(ETERA_WS_WIN)
-    #define ETERA_WS_X11_OR_WIN
+#define ETERA_WS_X11_OR_WIN
 #endif
 
 // в Qt 5.x сломана иконка трея, необходима собственная реализация
 // так же необходима реализация отдельного поведения для Ubuntu Unity
 #ifndef ETERA_CUSTOM_TRAY_ICON
-    #if defined(ETERA_WS_X11) && (defined(ETERA_CUSTOM_TRAY_ICON_GTK) || defined(ETERA_CUSTOM_TRAY_ICON_UNITY))
-        #define ETERA_CUSTOM_TRAY_ICON
-    #endif
+#if defined(ETERA_WS_X11) && (defined(ETERA_CUSTOM_TRAY_ICON_GTK) || defined(ETERA_CUSTOM_TRAY_ICON_UNITY))
+#define ETERA_CUSTOM_TRAY_ICON
+#endif
 #else
-    #error "Use ETERA_CUSTOM_TRAY_ICON_GTK or ETERA_CUSTOM_TRAY_ICON_UNITY directive instead ETERA_CUSTOM_TRAY_ICON"
+#error "Use ETERA_CUSTOM_TRAY_ICON_GTK or ETERA_CUSTOM_TRAY_ICON_UNITY directive instead ETERA_CUSTOM_TRAY_ICON"
 #endif
 
 // конкатенация строк для макроса версии
@@ -173,4 +173,4 @@
 #define ETERA_API_APP_ID     "51cba73d70c343fd96f0765e1eeb0435"
 #define ETERA_API_APP_SECRET "73cf4dacd4f74e7a97b77d036f90eb91"
 
-#endif   // _ekstertera_sysheaders_h_
+#endif // _ekstertera_sysheaders_h_

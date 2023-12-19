@@ -45,8 +45,8 @@
 #ifndef QT_NO_DESKTOPSERVICES
 
 #include "qstandardpaths.h"
-#include <qdir.h>
 #include <qcoreapplication.h>
+#include <qdir.h>
 
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -55,9 +55,8 @@ QT_BEGIN_NAMESPACE
 /*
     Translates a QStandardPaths::StandardLocation into the mac equivalent.
 */
-OSType translateLocation(QStandardPaths::StandardLocation type)
-{
-    switch (type) {
+OSType translateLocation(QStandardPaths::StandardLocation type) {
+    switch(type) {
     case QStandardPaths::ConfigLocation:
         return kPreferencesFolderType;
     case QStandardPaths::DesktopLocation:
@@ -92,35 +91,32 @@ OSType translateLocation(QStandardPaths::StandardLocation type)
 /*
     Constructs a full unicode path from a FSRef.
 */
-static QString getFullPath(const FSRef &ref)
-{
+static QString getFullPath(const FSRef& ref) {
     QByteArray ba(2048, 0);
-    if (FSRefMakePath(&ref, reinterpret_cast<UInt8 *>(ba.data()), ba.size()) == noErr)
+    if(FSRefMakePath(&ref, reinterpret_cast<UInt8*>(ba.data()), ba.size()) == noErr)
         return QString::fromUtf8(ba).normalized(QString::NormalizationForm_C);
     return QString();
 }
 
-static QString macLocation(QStandardPaths::StandardLocation type, short domain)
-{
+static QString macLocation(QStandardPaths::StandardLocation type, short domain) {
     // http://developer.apple.com/documentation/Carbon/Reference/Folder_Manager/Reference/reference.html
     FSRef ref;
     OSErr err = FSFindFolder(domain, translateLocation(type), false, &ref);
-    if (err)
-       return QString();
+    if(err)
+        return QString();
 
-   QString path = getFullPath(ref);
+    QString path = getFullPath(ref);
 
-   if (type == QStandardPaths::DataLocation || type == QStandardPaths::CacheLocation) {
-       if (!QCoreApplication::organizationName().isEmpty())
-           path += QLatin1Char('/') + QCoreApplication::organizationName();
-       if (!QCoreApplication::applicationName().isEmpty())
-           path += QLatin1Char('/') + QCoreApplication::applicationName();
-   }
-   return path;
+    if(type == QStandardPaths::DataLocation || type == QStandardPaths::CacheLocation) {
+        if(!QCoreApplication::organizationName().isEmpty())
+            path += QLatin1Char('/') + QCoreApplication::organizationName();
+        if(!QCoreApplication::applicationName().isEmpty())
+            path += QLatin1Char('/') + QCoreApplication::applicationName();
+    }
+    return path;
 }
 
-QString QStandardPaths::writableLocation(StandardLocation type)
-{
+QString QStandardPaths::writableLocation(StandardLocation type) {
     switch(type) {
     case HomeLocation:
         return QDir::homePath();
@@ -136,13 +132,12 @@ QString QStandardPaths::writableLocation(StandardLocation type)
     }
 }
 
-QStringList QStandardPaths::standardLocations(StandardLocation type)
-{
+QStringList QStandardPaths::standardLocations(StandardLocation type) {
     QStringList dirs;
 
-    if (type == GenericDataLocation || type == DataLocation || type == CacheLocation) {
+    if(type == GenericDataLocation || type == DataLocation || type == CacheLocation) {
         const QString path = macLocation(type, kOnAppropriateDisk);
-        if (!path.isEmpty())
+        if(!path.isEmpty())
             dirs.append(path);
     }
 
@@ -151,19 +146,18 @@ QStringList QStandardPaths::standardLocations(StandardLocation type)
     return dirs;
 }
 
-QString QStandardPaths::displayName(StandardLocation type)
-{
-    if (QStandardPaths::HomeLocation == type)
+QString QStandardPaths::displayName(StandardLocation type) {
+    if(QStandardPaths::HomeLocation == type)
         return QCoreApplication::translate("QStandardPaths", "Home");
 
     FSRef ref;
     OSErr err = FSFindFolder(kOnAppropriateDisk, translateLocation(type), false, &ref);
-    if (err)
+    if(err)
         return QString();
 
     CFStringRef displayName = 0;
     err = LSCopyDisplayNameForRef(&ref, &displayName);
-    if (err)
+    if(err)
         return QString();
 
     QString result = QString::fromUtf16((ushort*)CFStringGetCharactersPtr(displayName), CFStringGetLength(displayName));

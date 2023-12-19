@@ -1,8 +1,8 @@
 #include "widget_tasks.h"
 //----------------------------------------------------------------------------------------------
 
-WidgetTasks::WidgetTasks(QWidget* parent) : QTreeWidget(parent)
-{
+WidgetTasks::WidgetTasks(QWidget* parent)
+    : QTreeWidget(parent) {
     setHeaderHidden(true);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setColumnCount(2);
@@ -10,13 +10,11 @@ WidgetTasks::WidgetTasks(QWidget* parent) : QTreeWidget(parent)
 }
 //----------------------------------------------------------------------------------------------
 
-WidgetTasks::~WidgetTasks()
-{
+WidgetTasks::~WidgetTasks() {
 }
 //----------------------------------------------------------------------------------------------
 
-void WidgetTasks::resizeEvent(QResizeEvent* event)
-{
+void WidgetTasks::resizeEvent(QResizeEvent* event) {
     QSize size = event->size();
 
     setColumnWidth(0, size.width() * 50 / 100);
@@ -26,15 +24,13 @@ void WidgetTasks::resizeEvent(QResizeEvent* event)
 }
 //----------------------------------------------------------------------------------------------
 
-void WidgetTasks::addTask(quint64 id, const QString& text, const QString& tooltip)
-{
+void WidgetTasks::addTask(quint64 id, const QString& text, const QString& tooltip) {
     Q_ASSERT(id != 0);
     addChildTask(0, id, text, tooltip);
 }
 //----------------------------------------------------------------------------------------------
 
-void WidgetTasks::addChildTask(quint64 parent, quint64 id, const QString& text, const QString& tooltip)
-{
+void WidgetTasks::addChildTask(quint64 parent, quint64 id, const QString& text, const QString& tooltip) {
     Q_ASSERT(id != 0);
 
     WidgetTasksItem* pitem = m_tasks.value(parent, NULL);
@@ -42,10 +38,10 @@ void WidgetTasks::addChildTask(quint64 parent, quint64 id, const QString& text, 
 
     Q_ASSERT(parent == 0 || pitem != NULL);
 
-    if (titem == NULL) {
-        if (pitem != NULL) {
+    if(titem == NULL) {
+        if(pitem != NULL) {
             titem = new WidgetTasksItem(id, pitem);
-            if (pitem->isExpanded() == false)
+            if(pitem->isExpanded() == false)
                 pitem->setExpanded(true);
         } else
             titem = new WidgetTasksItem(id, this);
@@ -63,20 +59,18 @@ void WidgetTasks::addChildTask(quint64 parent, quint64 id, const QString& text, 
 }
 //----------------------------------------------------------------------------------------------
 
-void WidgetTasks::checkTask(quint64 id)
-{
+void WidgetTasks::checkTask(quint64 id) {
     // если у задачи есть дочерние элементы,
     // то она не будет удалена
     removeTask(id);
 }
 //----------------------------------------------------------------------------------------------
 
-void WidgetTasks::removeTask(quint64 id)
-{
+void WidgetTasks::removeTask(quint64 id) {
     Q_ASSERT(id != 0);
 
     WidgetTasksItem* item = m_tasks.value(id, NULL);
-    if (item == NULL)
+    if(item == NULL)
         return;
 
     int oldval = m_tasks.count();
@@ -85,18 +79,17 @@ void WidgetTasks::removeTask(quint64 id)
 
     int newval = m_tasks.count();
 
-    if (oldval != newval)
+    if(oldval != newval)
         emit onChangeCount(newval);
 }
 //----------------------------------------------------------------------------------------------
 
-void WidgetTasks::removeTask(WidgetTasksItem* item)
-{
+void WidgetTasks::removeTask(WidgetTasksItem* item) {
     // например, для задачи получения списка файлов
     // могут быть активны дочерние задачи, по этому
     // реальное удаление должно быть отложено до завершения
     // дочерних задач
-    if (item->childCount() != 0)
+    if(item->childCount() != 0)
         return;
 
     WidgetTasksItem* pitem = static_cast<WidgetTasksItem*>(item->parent());
@@ -106,26 +99,24 @@ void WidgetTasks::removeTask(WidgetTasksItem* item)
 
     delete item;
 
-    if (pitem != NULL)
+    if(pitem != NULL)
         removeTask(pitem);
 }
 //----------------------------------------------------------------------------------------------
 
-void WidgetTasks::childIDs(quint64 id, QList<quint64>& ids)
-{
+void WidgetTasks::childIDs(quint64 id, QList<quint64>& ids) {
     Q_ASSERT(id != 0);
 
     WidgetTasksItem* item = m_tasks.value(id, NULL);
-    if (item == NULL)
+    if(item == NULL)
         return;
 
     childIDs(item, ids);
 }
 //----------------------------------------------------------------------------------------------
 
-void WidgetTasks::childIDs(WidgetTasksItem* element, QList<quint64>& ids)
-{
-    for (int i = 0; i < element->childCount(); i++) {
+void WidgetTasks::childIDs(WidgetTasksItem* element, QList<quint64>& ids) {
+    for(int i = 0; i < element->childCount(); i++) {
         WidgetTasksItem* item = static_cast<WidgetTasksItem*>(element->child(i));
         childIDs(item, ids);
     }
@@ -134,17 +125,16 @@ void WidgetTasks::childIDs(WidgetTasksItem* element, QList<quint64>& ids)
 }
 //----------------------------------------------------------------------------------------------
 
-quint64 WidgetTasks::rootID(quint64 id)
-{
+quint64 WidgetTasks::rootID(quint64 id) {
     Q_ASSERT(id != 0);
 
     quint64 root = 0;
 
     WidgetTasksItem* item = m_tasks.value(id, NULL);
-    if (item == NULL)
+    if(item == NULL)
         return 0;
 
-    while (item != NULL) {
+    while(item != NULL) {
         root = item->id();
         item = static_cast<WidgetTasksItem*>(item->parent());
     }
@@ -153,29 +143,26 @@ quint64 WidgetTasks::rootID(quint64 id)
 }
 //----------------------------------------------------------------------------------------------
 
-QMessageBox::StandardButton WidgetTasks::reply(quint64 id)
-{
+QMessageBox::StandardButton WidgetTasks::reply(quint64 id) {
     Q_ASSERT(id != 0);
     return m_reply.value(id, QMessageBox::NoButton);
 }
 //----------------------------------------------------------------------------------------------
 
-void WidgetTasks::setReply(quint64 id, QMessageBox::StandardButton reply)
-{
+void WidgetTasks::setReply(quint64 id, QMessageBox::StandardButton reply) {
     Q_ASSERT(id != 0);
     m_reply[id] = reply;
 }
 //----------------------------------------------------------------------------------------------
 
-void WidgetTasks::setProgress(quint64 id, qint64 done, qint64 total)
-{
+void WidgetTasks::setProgress(quint64 id, qint64 done, qint64 total) {
     Q_ASSERT(id != 0);
 
     WidgetTasksItem* item = m_tasks.value(id, NULL);
-    if (item == NULL)
+    if(item == NULL)
         return;
 
-    if (item->bar() == NULL) {
+    if(item->bar() == NULL) {
         WidgetProgressbar* bar = new WidgetProgressbar();
         item->setBar(bar);
         setItemWidget(item, 1, bar);
@@ -188,16 +175,15 @@ void WidgetTasks::setProgress(quint64 id, qint64 done, qint64 total)
 }
 //----------------------------------------------------------------------------------------------
 
-void WidgetTasks::resetProgress(quint64 id)
-{
+void WidgetTasks::resetProgress(quint64 id) {
     Q_ASSERT(id != 0);
 
     WidgetTasksItem* item = m_tasks.value(id, NULL);
-    if (item == NULL)
+    if(item == NULL)
         return;
 
     WidgetProgressbar* bar = item->bar();
-    if (bar == NULL)
+    if(bar == NULL)
         return;
 
     bar->reset();

@@ -1,8 +1,8 @@
 #include "form_info.h"
 //----------------------------------------------------------------------------------------------
 
-FormInfo::FormInfo(const EteraItem& item, QWidget* parent) : FormInfoUI(parent)
-{
+FormInfo::FormInfo(const EteraItem& item, QWidget* parent)
+    : FormInfoUI(parent) {
     m_item = item;
 
     m_text_name->setText(m_item.name());
@@ -23,26 +23,23 @@ FormInfo::FormInfo(const EteraItem& item, QWidget* parent) : FormInfoUI(parent)
 }
 //----------------------------------------------------------------------------------------------
 
-FormInfo::~FormInfo()
-{
+FormInfo::~FormInfo() {
 }
 //----------------------------------------------------------------------------------------------
 
-void FormInfo::changeEvent(QEvent* event)
-{
-    if (event->type() == QEvent::LanguageChange)
+void FormInfo::changeEvent(QEvent* event) {
+    if(event->type() == QEvent::LanguageChange)
         retranslateUi();
     else
         QWidget::changeEvent(event);
 }
 //----------------------------------------------------------------------------------------------
 
-void FormInfo::retranslateUi()
-{
-    if (m_item.isDir() == true)
-        m_text_type->setText(trUtf8("Директория"));
-    else if (m_item.isFile() == true)
-        m_text_type->setText(trUtf8("Файл"));
+void FormInfo::retranslateUi() {
+    if(m_item.isDir() == true)
+        m_text_type->setText(tr("Директория"));
+    else if(m_item.isFile() == true)
+        m_text_type->setText(tr("Файл"));
 
     FormInfoUI::retranslateUi();
 }

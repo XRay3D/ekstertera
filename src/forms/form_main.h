@@ -24,6 +24,11 @@ protected:
      */
     void virtual changeEvent(QEvent* event);
 
+    void dragEnterEvent(QDragEnterEvent* event) override;
+    //----------------------------------------------------------------------------------------------
+
+    void dropEvent(QDropEvent* event) override;
+
 private:
     /*!
      * \brief Обновление статуса в статус-баре

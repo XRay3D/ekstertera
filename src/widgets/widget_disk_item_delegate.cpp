@@ -23,7 +23,7 @@ QSize WidgetDiskItemDelegate::sizeHint(const QStyleOptionViewItem& option, const
 //----------------------------------------------------------------------------------------------
 
 void WidgetDiskItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
-    QStyleOptionViewItemV4 opt = *qstyleoption_cast<const QStyleOptionViewItemV4*>(&option);
+    QStyleOptionViewItem opt = *qstyleoption_cast<const QStyleOptionViewItem*>(&option);
 
     bool selected = opt.state & QStyle::State_Selected;
 

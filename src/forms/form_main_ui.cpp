@@ -1,7 +1,39 @@
 #include "form_main_ui.h"
 //----------------------------------------------------------------------------------------------
 #include "utils/settings.h"
+
+#include <QDockWidget>
+#include <QProxyStyle>
 //----------------------------------------------------------------------------------------------
+
+class IconnedDockStyle : public QProxyStyle {
+    // Q_OBJECT
+    QIcon icon_;
+
+public:
+    IconnedDockStyle(const QIcon& icon, QStyle* style = 0)
+        : QProxyStyle{style}
+        , icon_{icon} { }
+    ~IconnedDockStyle() override = default;
+    void drawControl(ControlElement element, const QStyleOption* option,
+        QPainter* painter, const QWidget* widget = 0) const override {
+        if(element == QStyle::CE_DockWidgetTitle) {
+            // width of the icon
+            int width = pixelMetric(QStyle::PM_ToolBarIconSize);
+            // margin of title from frame
+            int margin = baseStyle()->pixelMetric(QStyle::PM_DockWidgetTitleMargin);
+
+            int k = (option->rect.height() - width) / 2 + margin;
+            painter->drawPixmap(k, k, icon_.pixmap(width, width));
+
+            const_cast<QStyleOption*>(option)->rect = option->rect.adjusted(width + margin * 2, 0, 0, 0);
+        }
+        baseStyle()->drawControl(element, option, painter, widget);
+    }
+    void setIcon(const QIcon& newIcon) {
+        icon_ = newIcon;
+    }
+};
 
 FormMainUI::FormMainUI()
     : QMainWindow() {
@@ -21,16 +53,43 @@ FormMainUI::FormMainUI()
     // центральный виджет
     //
 
-    m_widget_central = new QWidget{this};
-    m_layout_central = new QVBoxLayout(m_widget_central);
+    // m_widget_central = new QWidget{this};
+    // m_layout_central = new QVBoxLayout(m_widget_central);
 
-    m_widget_path = new WidgetDiskPath(m_widget_central);
-    m_layout_central->addWidget(m_widget_path);
+    // m_widget_path = new WidgetDiskPath(this /*m_widget_central*/);
+    // m_layout_central->addWidget(m_widget_path);
 
-    m_widget_disk = new WidgetDisk(m_widget_central);
-    m_layout_central->addWidget(m_widget_disk);
+    m_widget_disk = new WidgetDisk(this /*m_widget_central*/);
+    // m_layout_central->addWidget(m_widget_disk);
 
-    setCentralWidget(m_widget_central);
+    // setCentralWidget(m_widget_path /*m_widget_central*/);
+
+
+    m_explorer_dock = new QDockWidget{this};
+    m_tasks_dock = new QDockWidget{this};
+    auto setupDockWidget = [](QDockWidget* dw, auto&& name, QWidget* w) {
+        dw->setObjectName(name);
+        dw->setFeatures(QDockWidget::DockWidgetMovable);
+        dw->setWidget(w);
+        dw->setAllowedAreas(Qt::BottomDockWidgetArea);
+    };
+    setupDockWidget(m_explorer_dock, "explorerDock", m_widget_disk->m_explorer);
+    setupDockWidget(m_tasks_dock, "tasksDock", m_widget_disk->m_tasks);
+    m_tasks_dock->setStyle(m_icon_dock_style = new IconnedDockStyle(QIcon(":icons/green16.png"), m_tasks_dock->style()));
+
+    connect(m_widget_disk->m_tasks, &WidgetTasks::onChangeCount, m_tasks_dock, [this](int count) {
+        if(count > 0) {
+            m_icon_dock_style->setIcon(QIcon(":icons/yellow16.png"));
+            m_tasks_dock->setWindowTitle(tr("Задачи (%1)").arg(count));
+        } else {
+            m_icon_dock_style->setIcon(QIcon(":icons/green16.png"));
+            m_tasks_dock->setWindowTitle(tr("Задачи"));
+        }
+        m_tasks_dock->update();
+    });
+
+    addDockWidget(Qt::BottomDockWidgetArea, m_explorer_dock);
+    addDockWidget(Qt::BottomDockWidgetArea, m_tasks_dock);
 
     //
     // меню
@@ -98,6 +157,7 @@ FormMainUI::FormMainUI()
     //
 
     m_toolbar = addToolBar("");
+    m_toolbar->setObjectName("toolBar");
     m_toolbar->setFloatable(false);
 
     m_toolbar->addAction(m_menu_view_refresh);
@@ -201,6 +261,9 @@ void FormMainUI::retranslateUi() {
 
     m_tray_menu_show->setText(tr("Показать"));
 
+    m_explorer_dock->setWindowTitle(tr("Проводник"));
+    m_tasks_dock->setWindowTitle(tr("Задачи"));
+
 #ifdef ETERA_CUSTOM_TRAY_ICON
     m_tray_icon->retranslateUi();
 #endif
@@ -209,7 +272,8 @@ void FormMainUI::retranslateUi() {
 
 void FormMainUI::save() {
     QSettings settings;
-    settings.setValue("layout/main", this->saveGeometry());
+    settings.setValue("layout/main", saveGeometry());
+    settings.setValue("state/main", saveState());
     settings.setValue("app/zoom", m_widget_disk->zoomFactor());
     settings.setValue("app/preview", m_menu_view_preview->isChecked());
 }
@@ -219,6 +283,7 @@ void FormMainUI::restore() {
     QSettings settings;
 
     restoreGeometry(settings.value("layout/main").toByteArray());
+    restoreState(settings.value("state/main").toByteArray());
 
     int zoom = m_widget_disk->setZoomFactor(settings.value("app/zoom", -1).toInt());
     if(zoom < 0)

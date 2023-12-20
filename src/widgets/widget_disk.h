@@ -13,7 +13,7 @@
 /*!
  * \brief Виджет проводника Яндекс.Диск
  */
-class WidgetDisk : public QTabWidget {
+class WidgetDisk : public QObject /*QTabWidget*/ {
     Q_OBJECT
 
 public:
@@ -94,17 +94,17 @@ protected:
     /*!
      * \brief Скролл мышью
      */
-    virtual void wheelEvent(QWheelEvent* event);
+    // virtual void wheelEvent(QWheelEvent* event);
 
     /*!
      * \brief D&D
      */
-    virtual void dragEnterEvent(QDragEnterEvent* event);
+    // virtual void dragEnterEvent(QDragEnterEvent* event);
 
     /*!
      * \brief D&D
      */
-    virtual void dropEvent(QDropEvent* event);
+    // virtual void dropEvent(QDropEvent* event);
 
 private:
     QString ERROR_MESSAGE;                       /*!< \brief "Ошибка!"                                                   */
@@ -156,6 +156,8 @@ private:
     QString START_MESSAGE_DOWNLOAD_TEXT;         /*!< \brief "Файл %1 уже существует, перезаписать?" для get             */
 
 private:
+    friend class FormMainUI;
+    friend class FormMain;
     /*!
      * \brief Текущий путь
      */

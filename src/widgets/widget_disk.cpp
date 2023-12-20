@@ -10,7 +10,7 @@
 //----------------------------------------------------------------------------------------------
 
 WidgetDisk::WidgetDisk(QWidget* parent)
-    : QTabWidget(parent) {
+    : QObject /*QTabWidget*/ (parent) {
     m_preview_mode = false;
 
     m_message_box_active = false;
@@ -18,7 +18,7 @@ WidgetDisk::WidgetDisk(QWidget* parent)
     m_put_activity_limit = 8 /* TODO: #3 */;
     m_get_activity_limit = 8 /* TODO: #3 */;
 
-    m_explorer = new QListWidget{this};
+    m_explorer = new QListWidget{parent /*this*/};
 
     m_explorer->setWrapping(true);
     m_explorer->setResizeMode(QListView::Adjust);
@@ -29,12 +29,12 @@ WidgetDisk::WidgetDisk(QWidget* parent)
 
     setZoomFactor(EteraIconProvider::instance()->defaultIconSizeIndex());
 
-    m_tasks = new WidgetTasks(this);
+    m_tasks = new WidgetTasks(parent /*this*/);
 
-    setAcceptDrops(true);
+    // setAcceptDrops(true);
 
-    addTab(m_explorer, "");
-    addTab(m_tasks, QIcon(":icons/green16.png"), "");
+    // addTab(m_explorer, "");
+    // addTab(m_tasks, QIcon(":icons/green16.png"), "");
 
     int size = EteraIconProvider::instance()->maxIconSize();
     m_preview_arg = QString("%1x%2").arg(size).arg(size);
@@ -129,8 +129,8 @@ void WidgetDisk::retranslateUi() {
     m_menu_revoke->setText(tr("Закрыть доступ"));
     m_menu_info->setText(tr("Свойства"));
 
-    setTabText(0, tr("Проводник"));
-    setTabText(1, tr("Задачи"));
+    // setTabText(0, tr("Проводник"));
+    // setTabText(1, tr("Задачи"));
 
     //
     // информационные сообщения
@@ -185,9 +185,9 @@ void WidgetDisk::retranslateUi() {
 }
 //----------------------------------------------------------------------------------------------
 
-void WidgetDisk::wheelEvent(QWheelEvent* event) {
-    m_explorer->horizontalScrollBar()->event(event);
-}
+// void WidgetDisk::wheelEvent(QWheelEvent* event) {
+//     m_explorer->horizontalScrollBar()->event(event);
+// }
 //----------------------------------------------------------------------------------------------
 
 EteraAPI* WidgetDisk::createAPI(quint64 id) {
@@ -277,11 +277,11 @@ QString WidgetDisk::localBasename(const QString& path) {
 
 void WidgetDisk::widget_tasks_on_change_count(int count) {
     if(count > 0) {
-        setTabIcon(1, QIcon(":icons/yellow16.png"));
-        setTabText(1, tr("Задачи (%1)").arg(count));
+        // setTabIcon(1, QIcon(":icons/yellow16.png"));
+        // setTabText(1, tr("Задачи (%1)").arg(count));
     } else {
-        setTabIcon(1, QIcon(":icons/green16.png"));
-        setTabText(1, tr("Задачи"));
+        // setTabIcon(1, QIcon(":icons/green16.png"));
+        // setTabText(1, tr("Задачи"));
     }
 }
 //----------------------------------------------------------------------------------------------
@@ -454,7 +454,7 @@ void WidgetDisk::task_on_ls_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_LS.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_LS.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true) {
@@ -536,7 +536,7 @@ void WidgetDisk::menu_new_triggered() {
         return;
 
     bool ok;
-    QString value = QInputDialog::getText(this, START_MESSAGE_MKDIR_CAPTION, START_MESSAGE_MKDIR_TEXT, QLineEdit::Normal, START_MESSAGE_MKDIR_VALUE, &ok);
+    QString value = QInputDialog::getText((QWidget*)parent() /*this*/, START_MESSAGE_MKDIR_CAPTION, START_MESSAGE_MKDIR_TEXT, QLineEdit::Normal, START_MESSAGE_MKDIR_VALUE, &ok);
     if(ok == false || value.isEmpty() == true)
         return;
 
@@ -571,9 +571,9 @@ void WidgetDisk::task_on_mkdir_error(EteraAPI* api) {
     messageBoxLock();
     QMessageBox::StandardButton reply;
     if(api->lastErrorCode() == 409) // CONFLICT, директория уже существует
-        reply = QMessageBox::warning(this, ATTENTION_MESSAGE, ERROR_MESSAGE_MKDIR_ALREADY_EXISTS.arg(api->path()));
+        reply = QMessageBox::warning((QWidget*)parent() /*this*/, ATTENTION_MESSAGE, ERROR_MESSAGE_MKDIR_ALREADY_EXISTS.arg(api->path()));
     else
-        reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_MKDIR.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
+        reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_MKDIR.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -612,7 +612,7 @@ void WidgetDisk::task_on_mkdir_stat_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -663,7 +663,7 @@ void WidgetDisk::menu_paste_triggered() {
 
         // нет смысла перемещать само в себя
         if(src.path() == dst) {
-            QMessageBox::warning(this, ATTENTION_MESSAGE, ERROR_MESSAGE_CPMV_SAME);
+            QMessageBox::warning((QWidget*)this->parent() /*this*/, ATTENTION_MESSAGE, ERROR_MESSAGE_CPMV_SAME);
             return;
         }
 
@@ -705,9 +705,9 @@ void WidgetDisk::task_on_copy_paste_error(EteraAPI* api) {
     messageBoxLock();
     QMessageBox::StandardButton reply;
     if(api->lastErrorCode() == 409) // CONFLICT, объект уже существует
-        reply = QMessageBox::warning(this, ATTENTION_MESSAGE, ERROR_MESSAGE_CP_ALREADY_EXISTS.arg(api->source()).arg(api->target()));
+        reply = QMessageBox::warning((QWidget*)parent() /*this*/, ATTENTION_MESSAGE, ERROR_MESSAGE_CP_ALREADY_EXISTS.arg(api->source()).arg(api->target()));
     else
-        reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_CP.arg(api->source()).arg(api->target()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
+        reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_CP.arg(api->source()).arg(api->target()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -751,9 +751,9 @@ void WidgetDisk::task_on_cut_paste_error(EteraAPI* api) {
     messageBoxLock();
     QMessageBox::StandardButton reply;
     if(api->lastErrorCode() == 409) // CONFLICT, объект уже существует
-        reply = QMessageBox::warning(this, ATTENTION_MESSAGE, ERROR_MESSAGE_MV_ALREADY_EXISTS.arg(api->source()).arg(api->target()));
+        reply = QMessageBox::warning((QWidget*)parent() /*this*/, ATTENTION_MESSAGE, ERROR_MESSAGE_MV_ALREADY_EXISTS.arg(api->source()).arg(api->target()));
     else
-        reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_MV.arg(api->source()).arg(api->target()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
+        reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_MV.arg(api->source()).arg(api->target()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -795,7 +795,7 @@ void WidgetDisk::task_on_copy_cut_paste_stat_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->target()).arg(api->lastErrorMessage()));
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->target()).arg(api->lastErrorMessage()));
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -822,7 +822,7 @@ void WidgetDisk::menu_delete_triggered() {
     if(selected.count() == 0)
         return;
 
-    if(QMessageBox::question(this, ATTENTION_MESSAGE, ASK_DELETE_MESSAGE, QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes)
+    if(QMessageBox::question((QWidget*)parent() /*this*/, ATTENTION_MESSAGE, ASK_DELETE_MESSAGE, QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes)
         return;
 
     quint64 parent = 0;
@@ -871,7 +871,7 @@ void WidgetDisk::task_on_rm_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_RM.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_RM.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -935,13 +935,13 @@ void WidgetDisk::item_end_edit(QWidget* editor, QAbstractItemDelegate::EndEditHi
     for(auto&& ch: chars)
         if(value.contains(ch) == true) {
             witem->revertText();
-            QMessageBox::warning(this, ATTENTION_MESSAGE, ERROR_MESSAGE_RENAME_INVALID_CHAR.arg(ch));
+            QMessageBox::warning((QWidget*)parent() /*this*/, ATTENTION_MESSAGE, ERROR_MESSAGE_RENAME_INVALID_CHAR.arg(ch));
             return;
         }
 
     if(value == "." || value == "..") {
         witem->revertText();
-        QMessageBox::warning(this, ATTENTION_MESSAGE, ERROR_MESSAGE_RENAME_IVALID_NAME);
+        QMessageBox::warning((QWidget*)parent() /*this*/, ATTENTION_MESSAGE, ERROR_MESSAGE_RENAME_IVALID_NAME);
         return;
     }
 
@@ -964,9 +964,9 @@ void WidgetDisk::task_on_rename_error(EteraAPI* api) {
         witem->revertText();
 
     if(api->lastErrorCode() == 409)
-        QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_RENAME_ALREADY_EXISTS.arg(api->source()).arg(api->target()));
+        QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_RENAME_ALREADY_EXISTS.arg(api->source()).arg(api->target()));
     else
-        QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_RENAME.arg(api->source()).arg(api->target()).arg(api->lastErrorMessage()));
+        QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_RENAME.arg(api->source()).arg(api->target()).arg(api->lastErrorMessage()));
 
     releaseAPI(api);
 }
@@ -984,7 +984,7 @@ void WidgetDisk::task_on_rename_success(EteraAPI* api) {
 //----------------------------------------------------------------------------------------------
 
 void WidgetDisk::task_on_rename_stat_error(EteraAPI* api) {
-    QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->target()).arg(api->lastErrorMessage()));
+    QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->target()).arg(api->lastErrorMessage()));
 
     releaseAPI(api);
 }
@@ -1066,7 +1066,7 @@ void WidgetDisk::task_on_publish_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_PUBLISH.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_PUBLISH.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -1111,7 +1111,7 @@ void WidgetDisk::task_on_unpublish_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_UNPUBLISH.arg(api->path()).arg(api->lastErrorMessage()));
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_UNPUBLISH.arg(api->path()).arg(api->lastErrorMessage()));
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -1156,7 +1156,7 @@ void WidgetDisk::task_on_publish_stat_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -1196,7 +1196,7 @@ void WidgetDisk::task_on_unpublish_stat_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->path()).arg(api->lastErrorMessage()));
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->path()).arg(api->lastErrorMessage()));
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -1226,35 +1226,35 @@ void WidgetDisk::menu_info_triggered() {
 
     const EteraItem* eitem = witem->item();
 
-    FormInfo* info = new FormInfo(*eitem, this);
+    FormInfo* info = new FormInfo(*eitem, (QWidget*)parent() /*this*/);
     info->show();
 }
 //----------------------------------------------------------------------------------------------
 
-void WidgetDisk::dragEnterEvent(QDragEnterEvent* event) {
-    if(event->mimeData()->hasFormat("text/uri-list") == true && m_path.isEmpty() == false)
-        event->acceptProposedAction();
-}
-//----------------------------------------------------------------------------------------------
+// void WidgetDisk::dragEnterEvent(QDragEnterEvent* event) {
+//     if(event->mimeData()->hasFormat("text/uri-list") == true && m_path.isEmpty() == false)
+//         event->acceptProposedAction();
+// }
+// //----------------------------------------------------------------------------------------------
 
-void WidgetDisk::dropEvent(QDropEvent* event) {
-    if(m_path.isEmpty() == true)
-        return;
+// void WidgetDisk::dropEvent(QDropEvent* event) {
+//     if(m_path.isEmpty() == true)
+//         return;
 
-    if(event->mimeData()->hasFormat("text/uri-list") == true) {
-        QStringList list;
+//     if(event->mimeData()->hasFormat("text/uri-list") == true) {
+//         QStringList list;
 
-        QList<QUrl> urls = event->mimeData()->urls();
-        for(auto&& url: urls)
-            if(url.scheme() == "file")
-                list.append(url.toLocalFile());
+//         QList<QUrl> urls = event->mimeData()->urls();
+//         for(auto&& url: urls)
+//             if(url.scheme() == "file")
+//                 list.append(url.toLocalFile());
 
-        if(list.isEmpty() == false)
-            putLocalObjects(list);
+//         if(list.isEmpty() == false)
+//             putLocalObjects(list);
 
-        event->acceptProposedAction();
-    }
-}
+//         event->acceptProposedAction();
+//     }
+// }
 //----------------------------------------------------------------------------------------------
 
 void WidgetDisk::putLocalObjects(const QStringList& paths) {
@@ -1323,7 +1323,7 @@ void WidgetDisk::task_on_put_mkdir_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_MKDIR.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_MKDIR.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -1360,12 +1360,11 @@ void WidgetDisk::task_on_put_mkdir_success(EteraAPI* api) {
 void WidgetDisk::syncLocalDir(const QString& source, const QString& target, bool overwrite, quint64 parent) {
     QFileInfoList list = QDir(source).entryInfoList(QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
 
-    for(QFileInfo info: list) {
+    for(QFileInfo info: list)
         if(info.isDir() == true)
             putLocalDir(info.absoluteFilePath(), target + "/" + info.fileName(), overwrite, parent);
         else if(info.isFile() == true)
             putLocalFile(info.absoluteFilePath(), target + "/" + info.fileName(), overwrite, parent);
-    }
 }
 //----------------------------------------------------------------------------------------------
 
@@ -1410,7 +1409,7 @@ void WidgetDisk::task_on_put_file_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_UPLOAD.arg(api->source()).arg(api->target()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_UPLOAD.arg(api->source()).arg(api->target()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -1469,7 +1468,7 @@ void WidgetDisk::task_on_put_stat_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -1525,7 +1524,7 @@ void WidgetDisk::task_on_put_ensure_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_STAT.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -1562,7 +1561,7 @@ void WidgetDisk::task_on_put_ensure_success(EteraAPI* api, const EteraItem& item
                     }
 
                     messageBoxLock();
-                    reply = QMessageBox::question(this, START_MESSAGE_UPLOAD_CAPTION, START_MESSAGE_UPLOAD_TEXT.arg(api->path()), QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll);
+                    reply = QMessageBox::question((QWidget*)parent() /*this*/, START_MESSAGE_UPLOAD_CAPTION, START_MESSAGE_UPLOAD_TEXT.arg(api->path()), QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll);
                     messageBoxUnlock();
 
                     if(api->deleted() == true)
@@ -1601,7 +1600,7 @@ void WidgetDisk::task_on_put_ensure_success(EteraAPI* api, const EteraItem& item
                 }
 
                 messageBoxLock();
-                reply = QMessageBox::question(this, START_MESSAGE_UPLOAD_CAPTION, START_MESSAGE_UPLOAD_TEXT.arg(api->path()), QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll);
+                reply = QMessageBox::question((QWidget*)parent() /*this*/, START_MESSAGE_UPLOAD_CAPTION, START_MESSAGE_UPLOAD_TEXT.arg(api->path()), QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll);
                 messageBoxUnlock();
 
                 if(api->deleted() == true)
@@ -1659,7 +1658,7 @@ void WidgetDisk::task_on_put_rm_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_RM.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_RM.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -1855,7 +1854,7 @@ QMessageBox::StandardButton WidgetDisk::getRemoteDir(const QString& source, cons
     if(info.exists() == false) {
         QMessageBox::StandardButton reply = QMessageBox::Retry;
         while(reply == QMessageBox::Retry && info.dir().mkdir(info.absoluteFilePath()) == false)
-            reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_MKDIR.arg(info.absoluteFilePath()).arg(ERROR_MESSAGE_QT), QMessageBox::Retry | QMessageBox::Abort);
+            reply = QMessageBox::critical((QWidget*)this->parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_MKDIR.arg(info.absoluteFilePath()).arg(ERROR_MESSAGE_QT), QMessageBox::Retry | QMessageBox::Abort);
 
         if(reply != QMessageBox::Retry)
             return reply;
@@ -1869,7 +1868,7 @@ QMessageBox::StandardButton WidgetDisk::getRemoteDir(const QString& source, cons
 
         // что делать с конфликтами?
         if(reply != QMessageBox::YesToAll) {
-            reply = QMessageBox::question(this, START_MESSAGE_DOWNLOAD_CAPTION, START_MESSAGE_DOWNLOAD_TEXT.arg(target), QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll);
+            reply = QMessageBox::question((QWidget*)this->parent() /*this*/, START_MESSAGE_DOWNLOAD_CAPTION, START_MESSAGE_DOWNLOAD_TEXT.arg(target), QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll);
 
             m_tasks->setReply(rootid, reply);
 
@@ -1881,7 +1880,7 @@ QMessageBox::StandardButton WidgetDisk::getRemoteDir(const QString& source, cons
         // QMessageBox::YesToAll
         reply = QMessageBox::Retry;
         while(reply == QMessageBox::Retry && info.dir().remove(info.absoluteFilePath()) == false)
-            reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_RM.arg(info.absoluteFilePath()).arg(ERROR_MESSAGE_QT), QMessageBox::Retry | QMessageBox::Abort);
+            reply = QMessageBox::critical((QWidget*)this->parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_RM.arg(info.absoluteFilePath()).arg(ERROR_MESSAGE_QT), QMessageBox::Retry | QMessageBox::Abort);
 
         if(reply != QMessageBox::Retry)
             return reply;
@@ -1906,7 +1905,7 @@ QMessageBox::StandardButton WidgetDisk::getRemoteFile(const QString& source, con
 
         // что делать с конфликтами?
         if(reply != QMessageBox::YesToAll) {
-            reply = QMessageBox::question(this, START_MESSAGE_DOWNLOAD_CAPTION, START_MESSAGE_DOWNLOAD_TEXT.arg(target), QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll);
+            reply = QMessageBox::question((QWidget*)this->parent() /*this*/, START_MESSAGE_DOWNLOAD_CAPTION, START_MESSAGE_DOWNLOAD_TEXT.arg(target), QMessageBox::Yes | QMessageBox::No | QMessageBox::YesToAll | QMessageBox::NoToAll);
 
             m_tasks->setReply(rootid, reply);
 
@@ -1923,7 +1922,7 @@ QMessageBox::StandardButton WidgetDisk::getRemoteFile(const QString& source, con
         } else if(info.isFile() == true || info.isSymLink() == true) {
             QMessageBox::StandardButton reply = QMessageBox::Retry;
             while(reply == QMessageBox::Retry && info.dir().remove(info.absoluteFilePath()) == false)
-                reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_RM.arg(info.absoluteFilePath()).arg(ERROR_MESSAGE_QT), QMessageBox::Retry | QMessageBox::Abort);
+                reply = QMessageBox::critical((QWidget*)this->parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_RM.arg(info.absoluteFilePath()).arg(ERROR_MESSAGE_QT), QMessageBox::Retry | QMessageBox::Abort);
 
             if(reply != QMessageBox::Retry)
                 return reply;
@@ -1956,7 +1955,7 @@ void WidgetDisk::task_on_get_file_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_DOWNLOAD.arg(api->source()).arg(api->target()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_DOWNLOAD.arg(api->source()).arg(api->target()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)
@@ -1997,7 +1996,7 @@ QMessageBox::StandardButton WidgetDisk::removeDir(QDir dir) {
         if(info.isFile() == true || info.isSymLink() == true) {
             QMessageBox::StandardButton reply = QMessageBox::Retry;
             while(reply == QMessageBox::Retry && dir.remove(info.absoluteFilePath()) == false)
-                reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_RM.arg(info.absoluteFilePath()).arg(ERROR_MESSAGE_QT), QMessageBox::Retry | QMessageBox::Abort);
+                reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_RM.arg(info.absoluteFilePath()).arg(ERROR_MESSAGE_QT), QMessageBox::Retry | QMessageBox::Abort);
         } else if(info.isDir() == true) {
             QMessageBox::StandardButton reply = removeDir(info.absoluteFilePath());
             if(reply != QMessageBox::NoButton)
@@ -2007,7 +2006,7 @@ QMessageBox::StandardButton WidgetDisk::removeDir(QDir dir) {
 
     QMessageBox::StandardButton reply = QMessageBox::Retry;
     while(reply == QMessageBox::Retry && dir.rmdir(dir.absolutePath()) == false)
-        reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_RM.arg(dir.absolutePath()).arg(ERROR_MESSAGE_QT), QMessageBox::Retry | QMessageBox::Abort);
+        reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_RM.arg(dir.absolutePath()).arg(ERROR_MESSAGE_QT), QMessageBox::Retry | QMessageBox::Abort);
 
     return QMessageBox::NoButton;
 }
@@ -2030,7 +2029,7 @@ void WidgetDisk::task_on_get_dir_error(EteraAPI* api) {
     }
 
     messageBoxLock();
-    QMessageBox::StandardButton reply = QMessageBox::critical(this, ERROR_MESSAGE, ERROR_MESSAGE_LS.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
+    QMessageBox::StandardButton reply = QMessageBox::critical((QWidget*)parent() /*this*/, ERROR_MESSAGE, ERROR_MESSAGE_LS.arg(api->path()).arg(api->lastErrorMessage()), QMessageBox::Retry | QMessageBox::Abort | QMessageBox::Ignore);
     messageBoxUnlock();
 
     if(api->deleted() == true)

@@ -72,11 +72,11 @@
 #include <QUrlQuery>
 
 // Qt 5.x specific
-#include <QMimeDatabase>
-#include <QMimeType>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMimeDatabase>
+#include <QMimeType>
 #endif
 
 //

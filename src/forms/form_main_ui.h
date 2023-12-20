@@ -10,6 +10,8 @@
 #include "widgets/widget_disk_path.h"
 #include "widgets/widget_tray_icon.h"
 
+class QDockWidget;
+class IconnedDockStyle;
 /*!
  * \brief Класс для генерации GUI части главной формы
  */
@@ -60,8 +62,11 @@ protected:
      */
     QWidget* m_widget_central;
     QVBoxLayout* m_layout_central; /*!< \brief Вертикальное расположение */
-    WidgetDiskPath* m_widget_path; /*!< \brief Виджет отображения пути   */
+    // WidgetDiskPath* m_widget_path; /*!< \brief Виджет отображения пути   */
     WidgetDisk* m_widget_disk;     /*!< \brief Виджет отображения диска  */
+    QDockWidget* m_explorer_dock;
+    QDockWidget* m_tasks_dock;
+    IconnedDockStyle* m_icon_dock_style;
 
     /*!
      * \brief Статусбар

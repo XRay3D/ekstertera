@@ -32,7 +32,7 @@ FormMain::FormMain()
     connect(m_action_download, &QAction::triggered, this, &FormMain::action_download_triggered);
 
     // виджет пути
-    connect(m_widget_path, &WidgetDiskPath::onPathChangeRequest, this, &FormMain::widget_path_on_path_change_request);
+    // connect(m_widget_path, &WidgetDiskPath::onPathChangeRequest, this, &FormMain::widget_path_on_path_change_request);
 
     // виджет диска
     connect(m_widget_disk, &WidgetDisk::onPathChanged, this, &FormMain::widget_disk_on_path_changed);
@@ -58,6 +58,30 @@ void FormMain::changeEvent(QEvent* event) {
     }
 
     FormMainUI::changeEvent(event);
+}
+
+void FormMain::dragEnterEvent(QDragEnterEvent* event) {
+    if(event->mimeData()->hasFormat("text/uri-list") == true && m_widget_disk->m_path.isEmpty() == false)
+        event->acceptProposedAction();
+}
+
+void FormMain::dropEvent(QDropEvent* event) {
+    if(m_widget_disk->m_path.isEmpty() == true)
+        return;
+
+    if(event->mimeData()->hasFormat("text/uri-list") == true) {
+        QStringList list;
+
+        QList<QUrl> urls = event->mimeData()->urls();
+        for(auto&& url: urls)
+            if(url.scheme() == "file")
+                list.append(url.toLocalFile());
+
+        if(list.isEmpty() == false)
+            m_widget_disk->putLocalObjects(list);
+
+        event->acceptProposedAction();
+    }
 }
 //----------------------------------------------------------------------------------------------
 
@@ -181,7 +205,17 @@ void FormMain::widget_path_on_path_change_request(const QString& path) {
 //----------------------------------------------------------------------------------------------
 
 void FormMain::widget_disk_on_path_changed(const QString& path) {
-    m_widget_path->changePath(path);
+    // m_widget_path->changePath(path);
+    static std::vector<QAction*> actions;
+    qDeleteAll(actions);
+    actions.clear();
+    QString patrial;
+    for(auto&& path: path.split('/', Qt::SkipEmptyParts)) {
+        patrial += path + '/';
+        actions.emplace_back(
+            m_toolbar->addAction(path,
+                [patrial, this] { widget_path_on_path_change_request(patrial); }));
+    }
 }
 //----------------------------------------------------------------------------------------------
 

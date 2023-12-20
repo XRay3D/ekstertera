@@ -64,23 +64,23 @@ EteraIconProvider::EteraIconProvider()
     const EteraMediaIconMap media_icon_map[] = {
         {      eimtAudio,          "audio-x-generic",          ":/icons/tango/audio-x-generic.svg"},
         {     eimtBackup,        "package-x-generic",        ":/icons/tango/package-x-generic.svg"},
-        {       eimtBook,                       nullptr,                                         nullptr},
+        {       eimtBook,                    nullptr,                                      nullptr},
         { eimtCompressed,        "package-x-generic",        ":/icons/tango/package-x-generic.svg"},
-        {       eimtData,                       nullptr,                                         nullptr},
+        {       eimtData,                    nullptr,                                      nullptr},
         {eimtDevelopment,            "text-x-script",            ":/icons/tango/text-x-script.svg"},
         {  eimtDiskimage,        "package-x-generic",        ":/icons/tango/package-x-generic.svg"},
         {   eimtDocument,        "x-office-document",        ":/icons/tango/x-office-document.svg"},
-        {    eimtEncoded,                       nullptr,                                         nullptr},
+        {    eimtEncoded,                    nullptr,                                      nullptr},
         { eimtExecutable, "application-x-executable", ":/icons/tango/application-x-executable.svg"},
         {      eimtFlash,          "video-x-generic",          ":/icons/tango/video-x-generic.svg"},
         {       eimtFont,           "font-x-generic",           ":/icons/tango/font-x-generic.svg"},
         {      eimtImage,          "image-x-generic",          ":/icons/tango/image-x-generic.svg"},
-        {   eimtSettings,                       nullptr,                                         nullptr},
+        {   eimtSettings,                    nullptr,                                      nullptr},
         {eimtSpreadsheet,     "x-office-spreadsheet",     ":/icons/tango/x-office-spreadsheet.svg"},
         {       eimtText,           "text-x-generic",           ":/icons/tango/text-x-generic.svg"},
         {      eimtVideo,          "video-x-generic",          ":/icons/tango/video-x-generic.svg"},
         {        eimtWeb,                "text-html",                ":/icons/tango/text-html.svg"},
-        {    eimtUnknown,                       nullptr,                                         nullptr}
+        {    eimtUnknown,                    nullptr,                                      nullptr}
     };
 
     const EteraMediaIconMap* map = media_icon_map;

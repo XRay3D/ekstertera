@@ -193,7 +193,9 @@ void FormMain::updateInfoStatus() {
 
     api->setToken(token);
 
-    ETERA_API_TASK_INFO(api, task_on_info_success, task_on_info_error);
+    api->connectTask<&EteraAPI::onINFO,
+        &FormMain::task_on_info_success,
+        &FormMain::task_on_info_error>(this);
 
     api->info();
 }

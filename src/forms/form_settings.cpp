@@ -79,8 +79,8 @@ void FormSettings::button_token_clicked() {
         QMessageBox::warning(this, tr("Внимание!"), tr("Необходимо ввести код подтверждения!"));
         return;
     }
-
-    connect(api, &EteraAPI::onError, this, &FormSettings::task_on_token_error);
+    
+    connect(api, &EteraAPI::onERROR, this, &FormSettings::task_on_token_error);
     connect(api, &EteraAPI::onTOKEN, this, &FormSettings::task_on_token_success);
 
     api->getToken(auth_code);

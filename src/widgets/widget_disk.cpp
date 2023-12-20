@@ -428,7 +428,9 @@ void WidgetDisk::changePath(const QString& path) {
 
     EteraAPI* api = createAPI();
 
-    ETERA_API_TASK_LS(api, task_on_ls_success, task_on_ls_error);
+    api->connectTask<&EteraAPI::onLS,
+        &WidgetDisk::task_on_ls_success,
+        &WidgetDisk::task_on_ls_error>(this);
 
     m_tasks->addTask(api->id(), START_MESSAGE_LS.arg(_path));
 
@@ -544,7 +546,9 @@ void WidgetDisk::menu_new_triggered() {
 
     EteraAPI* api = createAPI();
 
-    ETERA_API_TASK_MKDIR(api, task_on_mkdir_success, task_on_mkdir_error);
+    api->connectTask<&EteraAPI::onMKDIR,
+        &WidgetDisk::task_on_mkdir_success,
+        &WidgetDisk::task_on_mkdir_error>(this);
 
     m_tasks->addTask(api->id(), START_MESSAGE_MKDIR.arg(path));
 
@@ -587,7 +591,9 @@ void WidgetDisk::task_on_mkdir_error(EteraAPI* api) {
 //----------------------------------------------------------------------------------------------
 
 void WidgetDisk::task_on_mkdir_success(EteraAPI* api) {
-    ETERA_API_TASK_STAT(api, task_on_mkdir_stat_success, task_on_mkdir_stat_error);
+    api->connectTask<&EteraAPI::onSTAT,
+        &WidgetDisk::task_on_mkdir_stat_success,
+        &WidgetDisk::task_on_mkdir_stat_error>(this);
 
     m_tasks->addTask(api->id(), START_MESSAGE_STAT.arg(api->path()));
 
@@ -670,13 +676,17 @@ void WidgetDisk::menu_paste_triggered() {
         EteraAPI* api = createAPI();
 
         if(clipboard->copyMode() == true) {
-            ETERA_API_TASK_CP(api, task_on_copy_paste_success, task_on_copy_paste_error);
+            api->connectTask<&EteraAPI::onCP,
+                &WidgetDisk::task_on_copy_paste_success,
+                &WidgetDisk::task_on_copy_paste_error>(this);
 
             m_tasks->addChildTask(parent, api->id(), START_MESSAGE_CP.arg(src.path()).arg(dst));
 
             api->cp(src.path(), dst, false);
         } else {
-            ETERA_API_TASK_MV(api, task_on_cut_paste_success, task_on_cut_paste_error);
+            api->connectTask<&EteraAPI::onMV,
+                &WidgetDisk::task_on_cut_paste_success,
+                &WidgetDisk::task_on_cut_paste_error>(this);
 
             m_tasks->addChildTask(parent, api->id(), START_MESSAGE_MV.arg(src.path()).arg(dst));
 
@@ -724,7 +734,9 @@ void WidgetDisk::task_on_copy_paste_error(EteraAPI* api) {
 void WidgetDisk::task_on_copy_paste_success(EteraAPI* api) {
     EteraClipboard::instance()->removeByPath(api->source());
 
-    ETERA_API_TASK_STAT(api, task_on_copy_cut_paste_stat_success, task_on_copy_cut_paste_stat_error);
+    api->connectTask<&EteraAPI::onSTAT,
+        &WidgetDisk::task_on_copy_cut_paste_stat_success,
+        &WidgetDisk::task_on_copy_cut_paste_stat_error>(this);
 
     m_tasks->addChildTask(api->parentID(), api->id(), START_MESSAGE_STAT.arg(api->target()));
 
@@ -770,7 +782,9 @@ void WidgetDisk::task_on_cut_paste_error(EteraAPI* api) {
 void WidgetDisk::task_on_cut_paste_success(EteraAPI* api) {
     EteraClipboard::instance()->removeByPath(api->source());
 
-    ETERA_API_TASK_STAT(api, task_on_copy_cut_paste_stat_success, task_on_copy_cut_paste_stat_error);
+    api->connectTask<&EteraAPI::onSTAT,
+        &WidgetDisk::task_on_copy_cut_paste_stat_success,
+        &WidgetDisk::task_on_copy_cut_paste_stat_error>(this);
 
     m_tasks->addChildTask(api->parentID(), api->id(), START_MESSAGE_STAT.arg(api->target()));
 
@@ -837,7 +851,9 @@ void WidgetDisk::menu_delete_triggered() {
 
         EteraAPI* api = createAPI();
 
-        ETERA_API_TASK_RM(api, task_on_rm_success, task_on_rm_error);
+        api->connectTask<&EteraAPI::onRM,
+            &WidgetDisk::task_on_rm_success,
+            &WidgetDisk::task_on_rm_error>(this);
 
         m_tasks->addChildTask(parent, api->id(), START_MESSAGE_RM.arg(eitem->path()));
 
@@ -949,7 +965,9 @@ void WidgetDisk::item_end_edit(QWidget* editor, QAbstractItemDelegate::EndEditHi
 
     EteraAPI* api = createAPI();
 
-    ETERA_API_TASK_MV(api, task_on_rename_success, task_on_rename_error);
+    api->connectTask<&EteraAPI::onMV,
+        &WidgetDisk::task_on_rename_success,
+        &WidgetDisk::task_on_rename_error>(this);
 
     m_tasks->addTask(api->id(), START_MESSAGE_RENAME.arg(eitem->path()).arg(path));
 
@@ -975,7 +993,9 @@ void WidgetDisk::task_on_rename_error(EteraAPI* api) {
 void WidgetDisk::task_on_rename_success(EteraAPI* api) {
     EteraClipboard::instance()->removeByPath(api->source());
 
-    ETERA_API_TASK_STAT(api, task_on_rename_stat_success, task_on_rename_stat_error);
+    api->connectTask<&EteraAPI::onSTAT,
+        &WidgetDisk::task_on_rename_stat_success,
+        &WidgetDisk::task_on_rename_stat_error>(this);
 
     m_tasks->addTask(api->id(), START_MESSAGE_STAT.arg(api->target()));
 
@@ -1033,13 +1053,17 @@ void WidgetDisk::shareObjects(bool share) {
         EteraAPI* api = createAPI();
 
         if(share == true && eitem->isPublic() == false) {
-            ETERA_API_TASK_PUBLISH(api, task_on_publish_success, task_on_publish_error);
+            api->connectTask<&EteraAPI::onPUBLISH,
+                &WidgetDisk::task_on_publish_success,
+                &WidgetDisk::task_on_publish_error>(this);
 
             m_tasks->addChildTask(parent, api->id(), START_MESSAGE_PUBLISH.arg(eitem->path()));
 
             api->publish(eitem->path());
         } else if(share == false && eitem->isPublic() == true) {
-            ETERA_API_TASK_UNPUBLISH(api, task_on_unpublish_success, task_on_unpublish_error);
+            api->connectTask<&EteraAPI::onUNPUBLISH,
+                &WidgetDisk::task_on_unpublish_success,
+                &WidgetDisk::task_on_unpublish_error>(this);
 
             m_tasks->addChildTask(parent, api->id(), START_MESSAGE_UNPUBLISH.arg(eitem->path()));
 
@@ -1085,7 +1109,9 @@ void WidgetDisk::task_on_publish_success(EteraAPI* api) {
     if(witem == nullptr)
         releaseAPI(api);
     else {
-        ETERA_API_TASK_STAT(api, task_on_publish_stat_success, task_on_publish_stat_error);
+        api->connectTask<&EteraAPI::onSTAT,
+            &WidgetDisk::task_on_publish_stat_success,
+            &WidgetDisk::task_on_publish_stat_error>(this);
 
         m_tasks->addChildTask(api->parentID(), api->id(), START_MESSAGE_STAT.arg(api->path()));
 
@@ -1130,7 +1156,9 @@ void WidgetDisk::task_on_unpublish_success(EteraAPI* api) {
     if(witem == nullptr)
         releaseAPI(api);
     else {
-        ETERA_API_TASK_STAT(api, task_on_unpublish_stat_success, task_on_unpublish_stat_error);
+        api->connectTask<&EteraAPI::onSTAT,
+            &WidgetDisk::task_on_unpublish_stat_success,
+            &WidgetDisk::task_on_unpublish_stat_error>(this);
 
         m_tasks->addChildTask(api->parentID(), api->id(), START_MESSAGE_STAT.arg(api->path()));
 
@@ -1308,7 +1336,9 @@ void WidgetDisk::task_on_put_mkdir_error(EteraAPI* api) {
 
     // если объект существует, нужно убедиться, что это директория и тогда можно продолжить работу
     if(api->lastErrorCode() == 409) {
-        ETERA_API_TASK_STAT(api, task_on_put_ensure_success, task_on_put_ensure_error);
+        api->connectTask<&EteraAPI::onSTAT,
+            &WidgetDisk::task_on_put_ensure_success,
+            &WidgetDisk::task_on_put_ensure_error>(this);
 
         m_tasks->addChildTask(api->parentID(), api->id(), START_MESSAGE_STAT.arg(api->path()));
 
@@ -1343,7 +1373,9 @@ void WidgetDisk::task_on_put_mkdir_success(EteraAPI* api) {
         return;
 
     { // TODO: блок нужен только если директория создана в текущей области видимости
-        ETERA_API_TASK_STAT(api, task_on_put_stat_success, task_on_put_stat_error);
+        api->connectTask<&EteraAPI::onSTAT,
+            &WidgetDisk::task_on_put_stat_success,
+            &WidgetDisk::task_on_put_stat_error>(this);
 
         m_tasks->addChildTask(api->parentID(), api->id(), START_MESSAGE_STAT.arg(api->path()));
 
@@ -1397,7 +1429,9 @@ void WidgetDisk::task_on_put_file_error(EteraAPI* api) {
 
         // пропускаем если ранее было указано не перезаписывать файлы
         if(reply != QMessageBox::NoToAll) {
-            ETERA_API_TASK_STAT(api, task_on_put_ensure_success, task_on_put_ensure_error);
+            api->connectTask<&EteraAPI::onSTAT,
+                &WidgetDisk::task_on_put_ensure_success,
+                &WidgetDisk::task_on_put_ensure_error>(this);
 
             m_tasks->addChildTask(api->parentID(), api->id(), START_MESSAGE_STAT.arg(api->target()));
 
@@ -1431,7 +1465,9 @@ void WidgetDisk::task_on_put_file_success(EteraAPI* api) {
         return;
 
     { // TODO: блок нужен только если файл создан в текущей области видимости
-        ETERA_API_TASK_STAT(api, task_on_put_stat_success, task_on_put_stat_error);
+        api->connectTask<&EteraAPI::onSTAT,
+            &WidgetDisk::task_on_put_stat_success,
+            &WidgetDisk::task_on_put_stat_error>(this);
 
         m_tasks->addChildTask(api->parentID(), api->id(), START_MESSAGE_STAT.arg(api->target()));
 
@@ -1576,7 +1612,9 @@ void WidgetDisk::task_on_put_ensure_success(EteraAPI* api, const EteraItem& item
 
                     api->setOverwrite(overwrite);
 
-                    ETERA_API_TASK_RM(api, task_on_put_rm_success, task_on_put_rm_error);
+                    api->connectTask<&EteraAPI::onRM,
+                        &WidgetDisk::task_on_put_rm_success,
+                        &WidgetDisk::task_on_put_rm_error>(this);
 
                     m_tasks->addChildTask(api->parentID(), api->id(), START_MESSAGE_RM.arg(api->path()));
 
@@ -1612,7 +1650,10 @@ void WidgetDisk::task_on_put_ensure_success(EteraAPI* api, const EteraItem& item
             // удалить и перезаписать файлом при положительном ответе
             if(reply == QMessageBox::Yes || reply == QMessageBox::YesToAll) {
                 if(item.isFile() == true) {
-                    ETERA_API_TASK_PUT(api, task_on_put_file_success, task_on_put_file_error, task_on_put_file_progress);
+                    api->connectTaskProgress<&EteraAPI::onPUT,
+                        &WidgetDisk::task_on_put_file_success,
+                        &WidgetDisk::task_on_put_file_error,
+                        &WidgetDisk::task_on_put_file_progress>(this);
 
                     m_tasks->addChildTask(api->parentID(), api->id(), localBasename(api->source()), START_MESSAGE_UPLOAD.arg(api->source()).arg(api->target()));
 
@@ -1622,7 +1663,9 @@ void WidgetDisk::task_on_put_ensure_success(EteraAPI* api, const EteraItem& item
 
                     api->setOverwrite(overwrite);
 
-                    ETERA_API_TASK_RM(api, task_on_put_rm_success, task_on_put_rm_error);
+                    api->connectTask<&EteraAPI::onRM,
+                        &WidgetDisk::task_on_put_rm_success,
+                        &WidgetDisk::task_on_put_rm_error>(this);
 
                     m_tasks->addChildTask(api->parentID(), api->id(), START_MESSAGE_RM.arg(api->path()));
 
@@ -1682,13 +1725,18 @@ void WidgetDisk::task_on_put_rm_success(EteraAPI* api) {
         return;
 
     if(api->ensure() == eitDir) {
-        ETERA_API_TASK_MKDIR(api, task_on_put_mkdir_success, task_on_put_mkdir_error);
+        api->connectTask<&EteraAPI::onMKDIR,
+            &WidgetDisk::task_on_put_mkdir_success,
+            &WidgetDisk::task_on_put_mkdir_error>(this);
 
         m_tasks->addChildTask(api->parentID(), api->id(), START_MESSAGE_MKDIR.arg(api->path()));
 
         api->mkdir(api->path());
     } else if(api->ensure() == eitFile) {
-        ETERA_API_TASK_PUT(api, task_on_put_file_success, task_on_put_file_error, task_on_put_file_progress);
+        api->connectTaskProgress<&EteraAPI::onPUT,
+            &WidgetDisk::task_on_put_file_success,
+            &WidgetDisk::task_on_put_file_error,
+            &WidgetDisk::task_on_put_file_progress>(this);
 
         m_tasks->addChildTask(api->parentID(), api->id(), localBasename(api->source()), START_MESSAGE_UPLOAD.arg(api->source()).arg(api->target()));
 
@@ -1737,7 +1785,10 @@ void WidgetDisk::spawnPutActivity(EteraPutActivityType type, EteraAPI* api) {
         api->setParentID(item.Parent);
         api->setEnsure(eitFile);
 
-        ETERA_API_TASK_PUT(api, task_on_put_file_success, task_on_put_file_error, task_on_put_file_progress);
+        api->connectTaskProgress<&EteraAPI::onPUT,
+            &WidgetDisk::task_on_put_file_success,
+            &WidgetDisk::task_on_put_file_error,
+            &WidgetDisk::task_on_put_file_progress>(this);
 
         m_put_active_api_put[item.ID] = api;
 
@@ -1756,7 +1807,9 @@ void WidgetDisk::spawnPutActivity(EteraPutActivityType type, EteraAPI* api) {
         api->setOverwrite(item.Overwrite);
         api->setEnsure(eitDir);
 
-        ETERA_API_TASK_MKDIR(api, task_on_put_mkdir_success, task_on_put_mkdir_error);
+        api->connectTask<&EteraAPI::onMKDIR,
+            &WidgetDisk::task_on_put_mkdir_success,
+            &WidgetDisk::task_on_put_mkdir_error>(this);
 
         m_put_active_api_mkdir[item.ID] = api;
 
@@ -2112,7 +2165,15 @@ void WidgetDisk::spawnGetActivity(EteraGetActivityType type, EteraAPI* api) {
 
         api->setParentID(item.Parent);
 
-        ETERA_API_TASK_GET(api, task_on_get_file_success, task_on_get_file_error, task_on_get_file_progress);
+        api->connectTaskProgress<&EteraAPI::onGET,
+            &WidgetDisk::task_on_get_file_success,
+            &WidgetDisk::task_on_get_file_error,
+            &WidgetDisk::task_on_get_file_progress>(this);
+
+        api->disconnect();
+        connect(api, &EteraAPI::onERROR, this, &WidgetDisk::task_on_get_file_error);
+        connect(api, &EteraAPI::onGET, this, &WidgetDisk::task_on_get_file_success);
+        connect(api, &EteraAPI::onProgress, this, &WidgetDisk::task_on_get_file_progress);
 
         m_get_active_api_get[item.ID] = api;
 
@@ -2130,7 +2191,9 @@ void WidgetDisk::spawnGetActivity(EteraGetActivityType type, EteraAPI* api) {
         api->setTarget(item.Target);
         api->setParentID(item.Parent);
 
-        ETERA_API_TASK_LS(api, task_on_get_dir_success, task_on_get_dir_error);
+        api->connectTask<&EteraAPI::onLS,
+            &WidgetDisk::task_on_get_dir_success,
+            &WidgetDisk::task_on_get_dir_error>(this);
 
         m_get_active_api_ls[item.ID] = api;
 

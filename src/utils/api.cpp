@@ -456,7 +456,7 @@ bool EteraAPI::setLastError(int code, const QString& message) {
     if(code != 0) {
         m_retry++;
         m_error_message = QString("[%1]: %2").arg(code).arg(message);
-        emit onError(this);
+        emit onERROR(this);
     } else {
         m_retry = 0;
         m_error_message = OK_MESSAGE;
